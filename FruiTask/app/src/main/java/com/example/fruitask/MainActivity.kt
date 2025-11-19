@@ -13,7 +13,7 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         setContent {
             FruiTaskTheme {
-                // Aquí llamamos a MainScreen en lugar de Greeting
+
                 PantallaPrincipal()
             }
         }

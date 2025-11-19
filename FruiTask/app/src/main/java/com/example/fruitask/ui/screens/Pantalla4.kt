@@ -10,5 +10,6 @@ import androidx.compose.ui.unit.dp
 fun Pantalla4(modifier: Modifier = Modifier) {
     Column(modifier = modifier.fillMaxSize().padding(16.dp)) {
         Text(text = "Contenido de Pantalla 4")
+
     }
 }

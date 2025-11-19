@@ -4,25 +4,33 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Home
+import androidx.compose.material.icons.filled.Favorite
+import androidx.compose.material.icons.filled.Settings
 import androidx.compose.ui.unit.dp
-import java.nio.file.WatchEvent
 
 @Composable
 fun PantallaPrincipal() {
     var selectedTab by remember { mutableStateOf(0) }
-    val tabs = listOf("Pantalla 1", "Pantalla 2", "Pantalla 3", "Pantalla 4")
+
+    // Lista de pestañas con íconos
+    val tabs = listOf(
+        Pair("Pantalla 1", Icons.Filled.Home),
+        Pair("Pantalla 2", Icons.Filled.Favorite),
+        Pair("Pantalla 3", Icons.Filled.Settings),
+        Pair("Pantalla 4", Icons.Filled.Home) // Puedes cambiar iconos
+    )
 
     Scaffold(
-        topBar = {
-            TabRow(selectedTabIndex = selectedTab,
-                modifier = Modifier.padding(top = 106.dp)
-
-            ) {
-                tabs.forEachIndexed { index, title ->
-                    Tab(
+        bottomBar = {
+            NavigationBar { // material3 NavigationBar en lugar de BottomNavigation
+                tabs.forEachIndexed { index, tab ->
+                    NavigationBarItem(
+                        icon = { Icon(tab.second, contentDescription = tab.first) },
+                        label = { Text(tab.first) },
                         selected = selectedTab == index,
-                        onClick = { selectedTab = index },
-                        text = { Text(title) }
+                        onClick = { selectedTab = index }
                     )
                 }
             }
