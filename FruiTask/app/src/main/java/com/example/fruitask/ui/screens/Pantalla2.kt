@@ -33,7 +33,7 @@ fun Pantalla2(modifier: Modifier = Modifier) {
     ) {
         Spacer(modifier = Modifier.height(40.dp))
 
-        // ---------------------- FILA SUPERIOR ----------------------
+        // la primera filaa
         Row(
             modifier = Modifier
                 .fillMaxWidth()
@@ -73,7 +73,7 @@ fun Pantalla2(modifier: Modifier = Modifier) {
 
         Spacer(Modifier.height(16.dp))
 
-        // ---------------------- IMAGEN DE LA MASCOTA ----------------------
+        // imagen con el tamagochi
         Box(
             modifier = Modifier
                 .fillMaxWidth()
@@ -81,7 +81,7 @@ fun Pantalla2(modifier: Modifier = Modifier) {
             contentAlignment = Alignment.Center
         ) {
             Image(
-                painter = painterResource(id = R.drawable.sandi_pancho), // asegúrate de que este drawable exista
+                painter = painterResource(id = R.drawable.sandi_pancho),
                 contentDescription = "Mascota",
                 modifier = Modifier.fillMaxSize()
             )
@@ -89,7 +89,7 @@ fun Pantalla2(modifier: Modifier = Modifier) {
 
         Spacer(Modifier.height(16.dp))
 
-        // ---------------------- FILA TAREAS + BOTÓN CREAR ----------------------
+        // creacion de tareas
         Row(
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.SpaceBetween,
@@ -109,7 +109,7 @@ fun Pantalla2(modifier: Modifier = Modifier) {
 
         Spacer(Modifier.height(16.dp))
 
-        // ---------------------- FORMULARIO (SOLO CUANDO SE CREA) ----------------------
+        // campos a rellenar
         if (mostrandoFormulario) {
 
             var tituloTarea by remember { mutableStateOf("") }
@@ -140,7 +140,7 @@ fun Pantalla2(modifier: Modifier = Modifier) {
             Spacer(Modifier.height(20.dp))
         }
 
-        // ---------------------- LISTA DE TAREAS (VISUAL) ----------------------
+        // lista de tareas con el repeat
         Column(
             modifier = Modifier.fillMaxWidth(),
             verticalArrangement = Arrangement.spacedBy(12.dp)
