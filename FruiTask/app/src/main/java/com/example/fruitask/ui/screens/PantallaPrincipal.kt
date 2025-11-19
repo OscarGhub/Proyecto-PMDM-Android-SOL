@@ -12,19 +12,18 @@ import androidx.compose.ui.unit.dp
 
 @Composable
 fun PantallaPrincipal() {
-    var selectedTab by remember { mutableStateOf(0) }
+    var selectedTab by remember { mutableIntStateOf(0) }
 
-    // Lista de pestañas con íconos
     val tabs = listOf(
         Pair("Pantalla 1", Icons.Filled.Home),
         Pair("Pantalla 2", Icons.Filled.Favorite),
         Pair("Pantalla 3", Icons.Filled.Settings),
-        Pair("Pantalla 4", Icons.Filled.Home) // Puedes cambiar iconos
+        Pair("Pantalla 4", Icons.Filled.Home)
     )
 
     Scaffold(
         bottomBar = {
-            NavigationBar { // material3 NavigationBar en lugar de BottomNavigation
+            NavigationBar {
                 tabs.forEachIndexed { index, tab ->
                     NavigationBarItem(
                         icon = { Icon(tab.second, contentDescription = tab.first) },
