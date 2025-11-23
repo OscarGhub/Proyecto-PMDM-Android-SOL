@@ -31,7 +31,7 @@ fun PantallaPrincipal() {
         Pair("", Icons.Filled.Home),
         Pair("", Icons.Filled.CalendarToday),
         Pair("", Icons.Filled.AccessTime),
-        Pair("", Icons.Filled.Home) //
+        Pair("", Icons.Filled.Home)
     )
 
     Scaffold(
