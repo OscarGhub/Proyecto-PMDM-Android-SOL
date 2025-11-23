@@ -6,6 +6,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.CalendarToday
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.AccessTime
+import androidx.compose.material.icons.filled.Share
 import androidx.compose.material3.Icon
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
@@ -31,7 +32,7 @@ fun PantallaPrincipal() {
         Pair("", Icons.Filled.Home),
         Pair("", Icons.Filled.CalendarToday),
         Pair("", Icons.Filled.AccessTime),
-        Pair("", Icons.Filled.Home)
+        Pair("", Icons.Filled.Share)
     )
 
     Scaffold(
