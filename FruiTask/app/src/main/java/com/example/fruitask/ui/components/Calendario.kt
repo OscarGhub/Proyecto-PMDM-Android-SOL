@@ -101,7 +101,7 @@ fun Calendario(
 
         Spacer(modifier = Modifier.height(8.dp))
 
-        // CENTRAR LA GRILLa EN PANTALLA
+        // CENTRAR EN PANTALLA
         Box(
             modifier = Modifier
                 .weight(1f)
