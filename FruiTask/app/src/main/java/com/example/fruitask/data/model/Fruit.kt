@@ -1,4 +1,9 @@
 package com.example.fruitask.data.model
 
-class Fruit {
-}
+data class Fruit(
+    val id: Int = 0,
+    val nombre: String,
+    val tipo: FruitType,
+
+    val isAvailable: Boolean = true
+)
