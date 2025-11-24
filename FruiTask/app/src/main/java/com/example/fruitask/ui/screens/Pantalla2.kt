@@ -45,7 +45,7 @@ fun Pantalla2(modifier: Modifier = Modifier) {
         ) {
             Spacer(modifier = Modifier.height(40.dp))
 
-            // Primera fila: nombre, nivel y XP
+            // Primera fila
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -171,7 +171,7 @@ fun Pantalla2(modifier: Modifier = Modifier) {
                         },
                         modifier = Modifier
                             .fillMaxWidth()
-                            .menuAnchor() // <--- IMPORTANTE: Necesario para vincular el menú
+                            .menuAnchor()
                     )
 
                     ExposedDropdownMenu(
