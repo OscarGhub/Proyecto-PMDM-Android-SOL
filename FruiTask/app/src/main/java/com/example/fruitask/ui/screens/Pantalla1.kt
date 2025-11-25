@@ -14,6 +14,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.example.fruitask.R
 
@@ -22,6 +23,8 @@ fun Pantalla1(modifier: Modifier = Modifier) {
     val scrollState = rememberScrollState()
     var personajeSeleccionado by remember { mutableStateOf("") }
     var showDialog by remember { mutableStateOf(false) }
+    var tituloTarea by remember { mutableStateOf("") }
+
     Column(
         modifier = modifier
             .fillMaxSize()
@@ -101,17 +104,48 @@ fun Pantalla1(modifier: Modifier = Modifier) {
         if (showDialog) {
             AlertDialog(
                 onDismissRequest = { showDialog = false },
-                title = { Text(text = "Personaje seleccionado") },
+                title = {
+                    Text(
+                        style = MaterialTheme.typography.headlineLarge,
+                        text = "Personaje seleccionado",
+                        modifier = Modifier.fillMaxWidth(),
+                        textAlign = TextAlign.Center
+                    )
+                },
                 text = {
+                    Column(
+                        horizontalAlignment = Alignment.CenterHorizontally
+                    ) {
+                        Text(
+                            style = MaterialTheme.typography.labelLarge,
+                            text = "Asigna un nombre a tu $personajeSeleccionado")
 
-                    Text(text = "$personajeSeleccionado :)")
+                        Spacer(modifier = Modifier.height(12.dp))
+
+                        OutlinedTextField(
+                            value = tituloTarea,
+                            onValueChange = { tituloTarea = it },
+                            label = { Text("Nombre") },
+                            modifier = Modifier.fillMaxWidth(0.9f).padding(start = 30.dp)
+                        )
+                    }
                 },
                 confirmButton = {
-                    Button(onClick = { showDialog = false }) {
-                        Text("OK")
+                    Button(
+                        onClick = { showDialog = false },
+                        modifier = Modifier.fillMaxWidth(),
+                        contentPadding = PaddingValues(vertical = 8.dp) // Ajusta altura del botón
+                    ) {
+                        Text(
+                            "OK",
+                            style = MaterialTheme.typography.labelLarge
+                        )
                     }
                 }
+                ,
+
             )
         }
+
     }
 }
