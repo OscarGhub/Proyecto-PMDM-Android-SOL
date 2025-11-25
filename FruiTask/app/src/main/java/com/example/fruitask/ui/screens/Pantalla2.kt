@@ -80,7 +80,7 @@ fun Pantalla2(modifier: Modifier = Modifier) {
             contentAlignment = Alignment.Center
         ) {
             Image(
-                painter = painterResource(id = R.drawable.sandi_pancho),
+                painter = painterResource(id = R.drawable.sandia_fondo),
                 contentDescription = "Mascota",
                 modifier = Modifier.fillMaxSize()
             )
