@@ -75,7 +75,7 @@ fun PantallaPrincipal() {
             0 -> Pantalla1(Modifier.padding(innerPadding))
             1 -> PantallaCalendario(Modifier.padding(innerPadding))
             2 -> Pantalla4(Modifier.padding(innerPadding))
-            3 -> Pantalla4(Modifier.padding(innerPadding))
+            3 -> Pantalla2(Modifier.padding(innerPadding))
         }
     }
 }

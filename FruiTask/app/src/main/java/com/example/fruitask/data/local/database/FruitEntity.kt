@@ -10,4 +10,6 @@ data class FruitEntity(
     val id: Int = 0,
     val nombre: String,
     val tipo: FruitType,
+    val nivel: Int,
+    val experiencia: Double
 )
