@@ -17,23 +17,31 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.example.fruitask.R
+import com.example.fruitask.data.local.model.FruitType
+import com.example.fruitask.viewmodel.FruitViewModel
 
 @Composable
-fun Pantalla1(modifier: Modifier = Modifier) {
+fun Pantalla1(
+    modifier: Modifier = Modifier,
+    viewModel: FruitViewModel
+) {
     val scrollState = rememberScrollState()
-    var personajeSeleccionado by remember { mutableStateOf("") }
+
+    var fruitTypeSeleccionado by remember { mutableStateOf<FruitType?>(null) }
+
+    var nombreMostrar by remember { mutableStateOf("") }
+
     var showDialog by remember { mutableStateOf(false) }
-    var tituloTarea by remember { mutableStateOf("") }
+    var nombrePersonaje by remember { mutableStateOf("") }
 
     Column(
         modifier = modifier
             .fillMaxSize()
             .verticalScroll(scrollState),
         horizontalAlignment = Alignment.CenterHorizontally,
-
     ) {
 
-        Box(
+        Box( // Contenedor del letrero
             modifier = Modifier
                 .fillMaxWidth()
                 .height(250.dp),
@@ -46,68 +54,49 @@ fun Pantalla1(modifier: Modifier = Modifier) {
             )
         }
 
-        Box(
-            modifier = Modifier
-                .fillMaxWidth()
-                .clickable {
-                    personajeSeleccionado = "Sandía"
-                    showDialog = true
-                }
-                .height(160.dp),
+        // --- Componente de selección ---
+        FruitSelectionBox(
+            drawableId = R.drawable.sandia,
+            fruitName = "Sandía",
+            onClick = {
+                fruitTypeSeleccionado = FruitType.SANDIA
+                nombreMostrar = "Sandía"
+                nombrePersonaje = ""
+                showDialog = true
+            }
+        )
 
-            contentAlignment = Alignment.Center
-        ) {
-            Image(
-                painter = painterResource(id = R.drawable.sandia),
-                contentDescription = "Mascota",
-                modifier = Modifier.fillMaxSize()
-            )
-        }
+        // --- Componente de selección (Kiwi) ---
+        FruitSelectionBox(
+            drawableId = R.drawable.kiwi,
+            fruitName = "Kiwi",
+            onClick = {
+                fruitTypeSeleccionado = FruitType.KIWI
+                nombreMostrar = "Kiwi"
+                nombrePersonaje = ""
+                showDialog = true
+            }
+        )
 
-
-        Box(
-            modifier = Modifier
-                .fillMaxWidth()
-                .clickable {
-                    personajeSeleccionado = "Kiwi"
-                    showDialog = true
-                }
-                .height(160.dp),
-            contentAlignment = Alignment.Center
-        ) {
-            Image(
-                painter = painterResource(id = R.drawable.kiwi),
-                contentDescription = "Mascota",
-                modifier = Modifier.fillMaxSize()
-            )
-        }
-
-
-        Box(
-            modifier = Modifier
-                .fillMaxWidth()
-                .clickable {
-                    personajeSeleccionado = "Manzana"
-                    showDialog = true
-                }
-                .height(160.dp),
-            contentAlignment = Alignment.Center
-        ) {
-            Image(
-                painter = painterResource(id = R.drawable.manzana),
-                contentDescription = "Mascota",
-                modifier = Modifier.fillMaxSize()
-            )
-        }
-
+        // --- Componente de selección (Manzana) ---
+        FruitSelectionBox(
+            drawableId = R.drawable.manzana,
+            fruitName = "Manzana",
+            onClick = {
+                fruitTypeSeleccionado = FruitType.MANZANA
+                nombreMostrar = "Manzana"
+                nombrePersonaje = ""
+                showDialog = true
+            }
+        )
 
         if (showDialog) {
             AlertDialog(
-                onDismissRequest = { showDialog = false },
+                onDismissRequest = { showDialog = false; nombrePersonaje = "" },
                 title = {
                     Text(
-                        style = MaterialTheme.typography.headlineLarge,
-                        text = "Personaje seleccionado",
+                        style = MaterialTheme.typography.headlineSmall,
+                        text = "Seleccionaste: $nombreMostrar",
                         modifier = Modifier.fillMaxWidth(),
                         textAlign = TextAlign.Center
                     )
@@ -118,34 +107,80 @@ fun Pantalla1(modifier: Modifier = Modifier) {
                     ) {
                         Text(
                             style = MaterialTheme.typography.labelLarge,
-                            text = "Asigna un nombre a tu $personajeSeleccionado")
+                            text = "Asigna un nombre a tu $nombreMostrar")
 
                         Spacer(modifier = Modifier.height(12.dp))
 
                         OutlinedTextField(
-                            value = tituloTarea,
-                            onValueChange = { tituloTarea = it },
+                            value = nombrePersonaje,
+                            onValueChange = { nombrePersonaje = it },
                             label = { Text("Nombre") },
-                            modifier = Modifier.fillMaxWidth(0.9f).padding(start = 30.dp)
+                            modifier = Modifier.fillMaxWidth()
                         )
                     }
                 },
+
                 confirmButton = {
                     Button(
-                        onClick = { showDialog = false },
+                        onClick = {
+                            // Guardamos solo si el nombre no está vacío Y hay un tipo de fruta seleccionado
+                            if (nombrePersonaje.isNotBlank() && fruitTypeSeleccionado != null) {
+
+                                // Llamada al ViewModel usando el Enum que se guardó al hacer clic
+                                viewModel.addFruit(
+                                    id = 0,
+                                    nombre = nombrePersonaje,
+                                    tipo = fruitTypeSeleccionado!!, // Usamos el Enum directamente
+                                    nivel = 0,
+                                    experiencia = 0.0
+                                )
+                            }
+                            // Cerrar el diálogo y limpiar el estado
+                            showDialog = false
+                            nombrePersonaje = ""
+                        },
+                        // Habilitar el botón solo si hay nombre y tipo seleccionado
+                        enabled = nombrePersonaje.isNotBlank() && fruitTypeSeleccionado != null,
                         modifier = Modifier.fillMaxWidth(),
-                        contentPadding = PaddingValues(vertical = 8.dp) // Ajusta altura del botón
+                        contentPadding = PaddingValues(vertical = 8.dp)
                     ) {
                         Text(
-                            "OK",
+                            "Guardar y Continuar",
                             style = MaterialTheme.typography.labelLarge
                         )
                     }
+                },
+                dismissButton = {
+                    TextButton(onClick = { showDialog = false; nombrePersonaje = "" }) {
+                        Text("Cancelar")
+                    }
                 }
-                ,
-
             )
         }
+    }
+}
 
+// Componente reutilizable para las cajas de selección
+@Composable
+fun FruitSelectionBox(drawableId: Int, fruitName: String, onClick: () -> Unit) {
+    Box(
+        modifier = Modifier
+            .fillMaxWidth()
+            .clickable(onClick = onClick)
+            .height(160.dp)
+            .padding(vertical = 4.dp, horizontal = 16.dp),
+        contentAlignment = Alignment.Center
+    ) {
+        Image(
+            painter = painterResource(id = drawableId),
+            contentDescription = fruitName,
+            modifier = Modifier.fillMaxSize()
+        )
+        Text(
+            text = fruitName,
+            style = MaterialTheme.typography.titleLarge,
+            color = MaterialTheme.colorScheme.onSurface,
+            modifier = Modifier.align(Alignment.BottomStart).padding(8.dp)
+        )
     }
 }
