@@ -1,7 +1,7 @@
 package com.example.fruitask.data
 
-import com.example.fruitask.data.local.database.FruitEntity
-import com.example.fruitask.data.model.Fruit
+import com.example.fruitask.data.local.entity.FruitEntity
+import com.example.fruitask.data.local.model.Fruit
 
 //Convierte un objeto FruitEntity (BDD) a un objeto Fruit (Dominio/UI).
 

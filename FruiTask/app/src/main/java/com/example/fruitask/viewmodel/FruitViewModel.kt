@@ -3,8 +3,8 @@ package com.example.fruitask.viewmodel
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.fruitask.data.local.repository.FruitRepository
-import com.example.fruitask.data.model.Fruit
-import com.example.fruitask.data.model.FruitType
+import com.example.fruitask.data.local.model.Fruit
+import com.example.fruitask.data.local.model.FruitType
 
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow

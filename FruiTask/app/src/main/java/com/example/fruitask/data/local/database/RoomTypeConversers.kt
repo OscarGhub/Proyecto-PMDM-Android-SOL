@@ -1,7 +1,7 @@
 package com.example.fruitask.data.local.database
 
 import androidx.room.TypeConverter
-import com.example.fruitask.data.model.FruitType
+import com.example.fruitask.data.local.model.FruitType
 
 class RoomTypeConverters {
 

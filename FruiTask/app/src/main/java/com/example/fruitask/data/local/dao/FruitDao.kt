@@ -1,15 +1,16 @@
-package com.example.fruitask.data.local.database
+package com.example.fruitask.data.local.dao
 
 import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
+import com.example.fruitask.data.local.entity.FruitEntity
 import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface FruitDao {
 
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    @Insert(onConflict = OnConflictStrategy.Companion.REPLACE)
     suspend fun insertarFruit(fruta: FruitEntity)
 
     @Query("SELECT * FROM fruit ORDER BY nombre ASC")

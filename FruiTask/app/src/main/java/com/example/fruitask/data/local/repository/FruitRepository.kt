@@ -1,7 +1,7 @@
 package com.example.fruitask.data.local.repository
 
-import com.example.fruitask.data.local.database.FruitDao
-import com.example.fruitask.data.model.Fruit
+import com.example.fruitask.data.local.dao.FruitDao
+import com.example.fruitask.data.local.model.Fruit
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import com.example.fruitask.data.toDomain
