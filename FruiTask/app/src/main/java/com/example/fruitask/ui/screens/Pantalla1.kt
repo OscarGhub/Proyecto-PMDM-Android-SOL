@@ -1,151 +1,333 @@
 package com.example.fruitask.ui.screens
 
+import android.content.Intent
+import com.example.fruitask.R
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.clickable
+import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.*
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.CameraAlt
+import androidx.compose.material.icons.filled.Check
+import androidx.compose.material.icons.filled.ChevronRight
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import com.example.fruitask.R
+import android.net.Uri
+import androidx.compose.material.icons.filled.MarkAsUnread
+import androidx.compose.ui.platform.LocalContext
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun Pantalla1(modifier: Modifier = Modifier) {
-    val scrollState = rememberScrollState()
-    var personajeSeleccionado by remember { mutableStateOf("") }
-    var showDialog by remember { mutableStateOf(false) }
-    var tituloTarea by remember { mutableStateOf("") }
 
-    Column(
-        modifier = modifier
-            .fillMaxSize()
-            .verticalScroll(scrollState),
-        horizontalAlignment = Alignment.CenterHorizontally,
+    var mostrandoFormulario by remember { mutableStateOf(false) }
+    val runrun = rememberScrollState()
+    var expanded by remember { mutableStateOf(false) }
+    val context = LocalContext.current
 
-    ) {
-
-        Box(
+    Box(modifier = Modifier.fillMaxSize()) {
+        Column(
             modifier = Modifier
-                .fillMaxWidth()
-                .height(250.dp),
-            contentAlignment = Alignment.Center
+                .fillMaxSize()
+                .verticalScroll(runrun)
+                .padding(16.dp)
         ) {
-            Image(
-                painter = painterResource(id = R.drawable.letrero),
-                contentDescription = "Mascota",
-                modifier = Modifier.fillMaxSize()
-            )
-        }
+            Spacer(modifier = Modifier.height(40.dp))
 
-        Box(
-            modifier = Modifier
-                .fillMaxWidth()
-                .clickable {
-                    personajeSeleccionado = "Sandía"
-                    showDialog = true
+            // Primera fila
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(4.dp)
+                    .height(60.dp)
+                    .border(2.dp, MaterialTheme.colorScheme.primary, RoundedCornerShape(12.dp)),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Text(
+                    text = "(Nombre)",
+                    style = MaterialTheme.typography.titleMedium,
+                    modifier = Modifier.padding(start = 12.dp)
+                )
+
+                Surface(
+                    shape = CircleShape,
+                    color = MaterialTheme.colorScheme.primary
+                ) {
+                    Box(
+                        modifier = Modifier.size(36.dp),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Text("1", color = MaterialTheme.colorScheme.onPrimary)
+                    }
                 }
-                .height(160.dp),
 
-            contentAlignment = Alignment.Center
-        ) {
-            Image(
-                painter = painterResource(id = R.drawable.sandia),
-                contentDescription = "Mascota",
-                modifier = Modifier.fillMaxSize()
-            )
-        }
+                Text(
+                    text = "0 / 100 XP",
+                    style = MaterialTheme.typography.titleMedium,
+                    modifier = Modifier.padding(end = 12.dp)
+                )
+            }
 
+            Spacer(Modifier.height(16.dp))
 
-        Box(
-            modifier = Modifier
-                .fillMaxWidth()
-                .clickable {
-                    personajeSeleccionado = "Kiwi"
-                    showDialog = true
+            // Imagen del Tamagochi
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .fillMaxHeight(0.40f),
+                contentAlignment = Alignment.Center
+            ) {
+                Image(
+                    painter = painterResource(id = R.drawable.sandia_fondo),
+                    contentDescription = "Mascota",
+                    modifier = Modifier.fillMaxSize()
+                )
+            }
+
+            Spacer(Modifier.height(16.dp))
+
+            // Creación de tareas
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Column {
+                    Text("Tareas", style = MaterialTheme.typography.titleLarge)
+                    Text("¿Qué tareas tenemos?")
                 }
-                .height(160.dp),
-            contentAlignment = Alignment.Center
-        ) {
-            Image(
-                painter = painterResource(id = R.drawable.kiwi),
-                contentDescription = "Mascota",
-                modifier = Modifier.fillMaxSize()
-            )
-        }
 
-
-        Box(
-            modifier = Modifier
-                .fillMaxWidth()
-                .clickable {
-                    personajeSeleccionado = "Manzana"
-                    showDialog = true
+                Button(onClick = { mostrandoFormulario = !mostrandoFormulario }) {
+                    Text("Crear")
                 }
-                .height(160.dp),
-            contentAlignment = Alignment.Center
-        ) {
-            Image(
-                painter = painterResource(id = R.drawable.manzana),
-                contentDescription = "Mascota",
-                modifier = Modifier.fillMaxSize()
-            )
-        }
+            }
 
+            Spacer(Modifier.height(16.dp))
 
-        if (showDialog) {
-            AlertDialog(
-                onDismissRequest = { showDialog = false },
-                title = {
-                    Text(
-                        style = MaterialTheme.typography.headlineLarge,
-                        text = "Personaje seleccionado",
-                        modifier = Modifier.fillMaxWidth(),
-                        textAlign = TextAlign.Center
+            // Formulario de creación de tareas
+            if (mostrandoFormulario) {
+
+                var tituloTarea by remember { mutableStateOf("") }
+                var descripcionTarea by remember { mutableStateOf("") }
+                var tipoTarea by remember { mutableStateOf("") }
+                var expanded by remember { mutableStateOf(false) }
+
+                val opciones = listOf(
+                    "Examen" to colorResource(id = R.color.purple_200),
+                    "Proyecto" to colorResource(id = R.color.purple_700),
+                    "Tarea" to colorResource(id = R.color.teal_200)
+                )
+
+                OutlinedTextField(
+                    value = tituloTarea,
+                    onValueChange = { tituloTarea = it },
+                    label = { Text("Título de la tarea") },
+                    modifier = Modifier.fillMaxWidth()
+                )
+
+                Spacer(Modifier.height(12.dp))
+
+                OutlinedTextField(
+                    value = descripcionTarea,
+                    onValueChange = { descripcionTarea = it },
+                    label = { Text("Descripción") },
+                    modifier = Modifier.fillMaxWidth()
+                )
+
+                Spacer(Modifier.height(12.dp))
+
+                // Dropdown corregido
+                ExposedDropdownMenuBox(
+                    expanded = expanded,
+                    onExpandedChange = { expanded = !expanded },
+                    modifier = Modifier.fillMaxWidth()
+                ) {
+                    OutlinedTextField(
+                        value = tipoTarea,
+                        onValueChange = {},
+                        readOnly = true,
+                        label = { Text("Tipo tarea") },
+                        trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded) },
+                        leadingIcon = {
+                            val color =
+                                opciones.find { it.first == tipoTarea }?.second ?: Color.Transparent
+                            Box(
+                                modifier = Modifier
+                                    .size(12.dp)
+                                    .background(color, CircleShape)
+                            )
+                        },
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .menuAnchor()
                     )
-                },
-                text = {
-                    Column(
-                        horizontalAlignment = Alignment.CenterHorizontally
-                    ) {
-                        Text(
-                            style = MaterialTheme.typography.labelLarge,
-                            text = "Asigna un nombre a tu $personajeSeleccionado")
 
-                        Spacer(modifier = Modifier.height(12.dp))
-
-                        OutlinedTextField(
-                            value = tituloTarea,
-                            onValueChange = { tituloTarea = it },
-                            label = { Text("Nombre") },
-                            modifier = Modifier.fillMaxWidth(0.9f).padding(start = 30.dp)
-                        )
-                    }
-                },
-                confirmButton = {
-                    Button(
-                        onClick = { showDialog = false },
-                        modifier = Modifier.fillMaxWidth(),
-                        contentPadding = PaddingValues(vertical = 8.dp) // Ajusta altura del botón
+                    ExposedDropdownMenu(
+                        expanded = expanded,
+                        onDismissRequest = { expanded = false }
                     ) {
-                        Text(
-                            "OK",
-                            style = MaterialTheme.typography.labelLarge
-                        )
+                        opciones.forEach { (nombre, color) ->
+                            // Sintaxis corregida para Material 3
+                            DropdownMenuItem(
+                                text = {
+                                    Row(verticalAlignment = Alignment.CenterVertically) {
+                                        Box(
+                                            modifier = Modifier
+                                                .size(12.dp)
+                                                .background(color, CircleShape)
+                                        )
+                                        Spacer(modifier = Modifier.width(8.dp))
+                                        Text(nombre)
+                                    }
+                                },
+                                onClick = {
+                                    tipoTarea = nombre
+                                    expanded = false
+                                }
+                            )
+                        }
                     }
                 }
-                ,
 
-            )
+                Spacer(Modifier.height(12.dp))
+
+                Button(onClick = { /* seleccionar fecha */ }) {
+                    Text("Seleccionar fecha")
+                }
+
+                Spacer(Modifier.height(20.dp))
+            }
+
+            // Lista de tareas
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(bottom = 100.dp),
+                verticalArrangement = Arrangement.spacedBy(12.dp)
+            ) {
+                repeat(2) {
+                    Card(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height(90.dp),
+                        shape = RoundedCornerShape(16.dp)
+                    ) {
+                        Row(
+                            modifier = Modifier
+                                .fillMaxSize()
+                                .padding(12.dp),
+                            horizontalArrangement = Arrangement.SpaceBetween,
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            Column {
+                                Text("Proyecto PMDM", style = MaterialTheme.typography.titleMedium)
+                                Text(
+                                    "Entregar proyecto PMDM",
+                                    style = MaterialTheme.typography.bodyMedium
+                                )
+                                Row(verticalAlignment = Alignment.CenterVertically) {
+                                    Spacer(Modifier.width(4.dp))
+                                    Text("11/12/2025")
+                                }
+                            }
+
+                            Icon(
+                                imageVector = Icons.Filled.Check,
+                                contentDescription = "Completar",
+                                modifier = Modifier.size(32.dp)
+                            )
+                        }
+                    }
+                }
+            }
         }
 
+        Column(
+            horizontalAlignment = Alignment.End,
+            verticalArrangement = Arrangement.spacedBy(16.dp, alignment = Alignment.Bottom), // hace que crezcan hacia arriba
+            modifier = Modifier
+                .align(Alignment.BottomEnd)
+                .padding(bottom = 210.dp, end = 20.dp) // empieza desde arriba del FAB
+        ) {
+            if (expanded) {
+                // YouTube
+                FloatingActionButton(
+                    onClick = {
+                        val intent = Intent(Intent.ACTION_VIEW, Uri.parse("https://www.youtube.com/"))
+                        context.startActivity(intent)
+                    },
+                    containerColor = Color(0xFFFF0000),
+                    contentColor = Color.White,
+                    modifier = Modifier.size(48.dp)
+                ) {
+                    Icon(
+                        imageVector = Icons.Filled.ChevronRight,
+                        contentDescription = "Abrir Youtube"
+                    )
+                }
+
+                // Correo
+                FloatingActionButton(
+                    onClick = {
+                        val intent = Intent(Intent.ACTION_SENDTO).apply {
+                            data = Uri.parse("mailto:") // Solo apps de correo
+                        }
+                        context.startActivity(intent)
+                    },
+                    containerColor = Color(0xFF1DA1F2),
+                    contentColor = Color.White,
+                    modifier = Modifier.size(48.dp)
+                ) {
+                    Icon(
+                        imageVector = Icons.Filled.MarkAsUnread,
+                        contentDescription = "Abrir Correo"
+                    )
+                }
+
+                //  Instagram
+                FloatingActionButton(
+                    onClick = {
+                        val intent =
+                            Intent(Intent.ACTION_VIEW, Uri.parse("https://www.instagram.com/"))
+                        context.startActivity(intent)
+                    },
+                    containerColor = Color(0xFFC13584),
+                    contentColor = Color.White,
+                    modifier = Modifier.size(48.dp)
+                ) {
+                    Icon(
+                        imageVector = Icons.Filled.CameraAlt,
+                        contentDescription = "Abrir Instagram"
+                    )
+                }
+            }
+        }
+
+        // FAB principal
+        FloatingActionButton(
+            onClick = { expanded = !expanded },
+            containerColor = MaterialTheme.colorScheme.primary,
+            contentColor = MaterialTheme.colorScheme.onPrimary,
+            modifier = Modifier
+                .align(Alignment.BottomEnd)
+                .padding(bottom = 140.dp, end = 16.dp) // pequeño espacio desde la esquina
+        ) {
+            Icon(
+                imageVector = Icons.Filled.Add,
+                contentDescription = "Abrir redes"
+            )
+        }
     }
 }

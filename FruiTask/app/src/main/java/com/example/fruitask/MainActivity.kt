@@ -4,6 +4,7 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import com.example.fruitask.ui.screens.PantallaInicio
 import com.example.fruitask.ui.screens.PantallaPrincipal
 import com.example.fruitask.ui.theme.FruiTaskTheme
 
@@ -14,7 +15,7 @@ class MainActivity : ComponentActivity() {
         setContent {
             FruiTaskTheme {
 
-                PantallaPrincipal()
+                PantallaInicio()
             }
         }
     }

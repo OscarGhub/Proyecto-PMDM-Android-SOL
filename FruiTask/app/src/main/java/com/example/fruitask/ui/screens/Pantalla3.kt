@@ -15,7 +15,7 @@ import com.example.fruitask.ui.theme.VerdeBoton
 import com.example.fruitask.ui.theme.VerdeFondo
 
 @Composable
-fun Pantalla4(modifier: Modifier = Modifier) {
+fun Pantalla3(modifier: Modifier = Modifier) {
 
     var horas by remember { mutableIntStateOf(0) }
     var minutos by remember { mutableIntStateOf(0) }

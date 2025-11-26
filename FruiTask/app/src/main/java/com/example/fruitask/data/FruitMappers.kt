@@ -21,5 +21,7 @@ fun Fruit.toEntity(): FruitEntity {
         id = this.id,
         nombre = this.nombre,
         tipo = this.tipo,
+        nivel = TODO(),
+        experiencia = TODO(),
     )
 }
