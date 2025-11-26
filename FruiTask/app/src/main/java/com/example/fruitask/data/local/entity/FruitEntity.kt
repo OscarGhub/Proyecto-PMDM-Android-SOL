@@ -1,8 +1,8 @@
-package com.example.fruitask.data.local.database
+package com.example.fruitask.data.local.entity
 
 import androidx.room.Entity
 import androidx.room.PrimaryKey
-import com.example.fruitask.data.model.FruitType
+import com.example.fruitask.data.local.model.FruitType
 
 @Entity(tableName = "fruit")
 data class FruitEntity(

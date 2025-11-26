@@ -1,4 +1,4 @@
-package com.example.fruitask.data.model
+package com.example.fruitask.data.local.model
 
 data class Fruit(
     val id: Int = 0,

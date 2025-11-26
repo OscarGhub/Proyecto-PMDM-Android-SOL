@@ -1,7 +1,7 @@
 package com.example.fruitask.data.local.repository
 
 import com.example.fruitask.data.local.dao.TaskDao
-import com.example.fruitask.data.local.database.TaskEntity
+import com.example.fruitask.data.local.entity.TaskEntity
 import kotlinx.coroutines.flow.Flow
 
 class TaskRepository(private val taskDao: TaskDao) {

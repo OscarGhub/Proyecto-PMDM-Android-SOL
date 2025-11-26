@@ -1,12 +1,12 @@
 package com.example.fruitask.data.local.repository
 
-import com.example.fruitask.data.local.database.FruitDao
-import com.example.fruitask.data.local.database.FruitEntity
-import com.example.fruitask.data.model.Fruit
+import com.example.fruitask.data.local.model.Fruit
+import com.example.fruitask.data.local.dao.FruitDao
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import com.example.fruitask.data.toDomain
 import com.example.fruitask.data.toEntity
+import kotlin.collections.map
 
 class FruitRepository(private val fruitDao: FruitDao) {
 
@@ -24,11 +24,4 @@ class FruitRepository(private val fruitDao: FruitDao) {
         fruitDao.insertarFruit(fruit.toEntity())
     }
 
-    suspend fun update(fruit: FruitEntity) {
-        fruitDao.updateFruit(fruit)
-    }
-
-    suspend fun delete(fruitId: Int) {
-        fruitDao.deleteFruitById(fruitId)
-    }
 }

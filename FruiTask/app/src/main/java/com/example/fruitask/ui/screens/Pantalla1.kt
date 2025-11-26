@@ -17,7 +17,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.example.fruitask.R
-import com.example.fruitask.data.model.FruitType
+import com.example.fruitask.data.local.model.FruitType
 import com.example.fruitask.viewmodel.FruitViewModel
 
 @Composable
