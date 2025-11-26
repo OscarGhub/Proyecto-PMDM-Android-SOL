@@ -1,6 +1,7 @@
 package com.example.fruitask.ui.screens
 
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
@@ -17,22 +18,22 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.example.fruitask.R
+import com.example.fruitask.ui.theme.VerdeFondo
 
 @Composable
-fun PantallaEleccionPersonajes(modifier: Modifier = Modifier, onFrutaSeleccionada: (String) -> Unit,) {
-
+fun PantallaEleccionPersonajes(modifier: Modifier = Modifier, onFrutaSeleccionada: (tipo: String, nombre: String) -> Unit) {
 
     val scrollState = rememberScrollState()
     var personajeSeleccionado by remember { mutableStateOf("") }
     var showDialog by remember { mutableStateOf(false) }
-    var tituloTarea by remember { mutableStateOf("") }
+    var nombreFruta by remember { mutableStateOf("") }
 
     Column(
         modifier = modifier
             .fillMaxSize()
+            .background(VerdeFondo)
             .verticalScroll(scrollState),
         horizontalAlignment = Alignment.CenterHorizontally,
-
     ) {
 
         Box(
@@ -52,7 +53,7 @@ fun PantallaEleccionPersonajes(modifier: Modifier = Modifier, onFrutaSeleccionad
             modifier = Modifier
                 .fillMaxWidth()
                 .clickable {
-                    personajeSeleccionado = "Sandía"
+                    personajeSeleccionado = "Sandia"
                     showDialog = true
                 }
                 .height(160.dp),
@@ -101,54 +102,54 @@ fun PantallaEleccionPersonajes(modifier: Modifier = Modifier, onFrutaSeleccionad
                 modifier = Modifier.fillMaxSize()
             )
         }
+    }
 
-
-        if (showDialog) {
-            AlertDialog(
-                onDismissRequest = { showDialog = false },
-                title = {
+    if (showDialog) {
+        AlertDialog(
+            onDismissRequest = { showDialog = false },
+            title = {
+                Text(
+                    style = MaterialTheme.typography.headlineLarge,
+                    text = "Personaje seleccionado",
+                    modifier = Modifier.fillMaxWidth(),
+                    textAlign = TextAlign.Center
+                )
+            },
+            text = {
+                Column(
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
                     Text(
-                        style = MaterialTheme.typography.headlineLarge,
-                        text = "Personaje seleccionado",
-                        modifier = Modifier.fillMaxWidth(),
-                        textAlign = TextAlign.Center
+                        style = MaterialTheme.typography.labelLarge,
+                        text = "Asigna un nombre a tu $personajeSeleccionado")
+
+                    Spacer(modifier = Modifier.height(12.dp))
+
+                    OutlinedTextField(
+                        value = nombreFruta,
+                        onValueChange = { nombreFruta = it },
+                        label = { Text("Nombre") },
+                        modifier = Modifier.fillMaxWidth(0.9f).padding(start = 30.dp)
                     )
-                },
-                text = {
-                    Column(
-                        horizontalAlignment = Alignment.CenterHorizontally
-                    ) {
-                        Text(
-                            style = MaterialTheme.typography.labelLarge,
-                            text = "Asigna un nombre a tu $personajeSeleccionado")
-
-                        Spacer(modifier = Modifier.height(12.dp))
-
-                        OutlinedTextField(
-                            value = tituloTarea,
-                            onValueChange = { tituloTarea = it },
-                            label = { Text("Nombre") },
-                            modifier = Modifier.fillMaxWidth(0.9f).padding(start = 30.dp)
-                        )
-                    }
-                },
-                confirmButton = {
-                    Button(
-                        onClick = { showDialog = false
-
-                            onFrutaSeleccionada(personajeSeleccionado)
-                                  },
-                        modifier = Modifier.fillMaxWidth(),
-                        contentPadding = PaddingValues(vertical = 8.dp) // Ajusta altura del botón
-                    ) {
-                        Text(
-                            "OK",
-                            style = MaterialTheme.typography.labelLarge
-                        )
-                    }
                 }
-                ,
-            )
-        }
+            },
+            confirmButton = {
+                Button(
+                    onClick = {
+                        showDialog = false
+                        // LLAMADA FINAL: Pasa el tipo y el nombre de la fruta
+                        onFrutaSeleccionada(personajeSeleccionado, nombreFruta)
+                    },
+                    enabled = nombreFruta.isNotBlank(),
+                    modifier = Modifier.fillMaxWidth(),
+                    contentPadding = PaddingValues(vertical = 8.dp)
+                ) {
+                    Text(
+                        "OK",
+                        style = MaterialTheme.typography.labelLarge
+                    )
+                }
+            }
+        )
     }
 }

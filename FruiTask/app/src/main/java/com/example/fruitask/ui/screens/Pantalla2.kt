@@ -1,5 +1,6 @@
 package com.example.fruitask.ui.screens
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -7,10 +8,12 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.sp
+import com.example.fruitask.data.local.database.MyViewModel
 import com.example.fruitask.ui.components.*
+import com.example.fruitask.ui.theme.VerdeFondo
 
 @Composable
-fun Pantalla2(modifier: Modifier = Modifier) {
+fun Pantalla2(modifier: Modifier = Modifier, viewModel: MyViewModel) {
 
     val actividades = listOf(
         ActividadCalendario(2025, 11, 10, TipoActividad.EXAMEN, "Examen de Matemáticas"),
@@ -19,7 +22,9 @@ fun Pantalla2(modifier: Modifier = Modifier) {
     )
 
     Column(
-        modifier = modifier.fillMaxSize(),
+        modifier = modifier
+            .fillMaxSize()
+            .background(VerdeFondo),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Text(

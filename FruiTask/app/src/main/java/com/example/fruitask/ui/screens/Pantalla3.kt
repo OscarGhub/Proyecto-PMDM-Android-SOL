@@ -10,12 +10,13 @@ import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.example.fruitask.data.local.database.MyViewModel
 import com.example.fruitask.ui.components.NumeroWheel
 import com.example.fruitask.ui.theme.VerdeBoton
 import com.example.fruitask.ui.theme.VerdeFondo
 
 @Composable
-fun Pantalla3(modifier: Modifier = Modifier) {
+fun Pantalla3(modifier: Modifier = Modifier, viewModel: MyViewModel) {
 
     var horas by remember { mutableIntStateOf(0) }
     var minutos by remember { mutableIntStateOf(0) }

@@ -1,42 +1,111 @@
 package com.example.fruitask.ui.screens
 
 import android.content.Intent
-import com.example.fruitask.R
+import android.net.Uri
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.CameraAlt
 import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.ChevronRight
-import androidx.compose.runtime.*
+import androidx.compose.material.icons.filled.MarkAsUnread
+import androidx.compose.material3.Button
+import androidx.compose.material3.Card
+import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.DropdownMenuItem
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.ExposedDropdownMenuBox
+import androidx.compose.material3.ExposedDropdownMenuDefaults
+import androidx.compose.material3.FloatingActionButton
+import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.Surface
+import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
-import android.net.Uri
-import androidx.compose.material.icons.filled.MarkAsUnread
-import androidx.compose.ui.platform.LocalContext
+import androidx.compose.runtime.livedata.observeAsState
+import com.example.fruitask.R
+import com.example.fruitask.data.local.database.MyViewModel
+import com.example.fruitask.data.local.model.TipoActividad
+import com.example.fruitask.data.local.model.TipoFruit
+import com.example.fruitask.data.local.model.Task
+import com.example.fruitask.ui.theme.VerdeFondo
+import java.util.Date
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun Pantalla1(modifier: Modifier = Modifier) {
+fun Pantalla1(modifier: Modifier = Modifier, viewModel: MyViewModel) {
 
+    // 1. OBSERVACIÓN DE DATOS
+    val activeFruit by viewModel.activeFruit.observeAsState()
+    val tareas by viewModel.taskList.observeAsState(initial = emptyList())
+
+    // Estados UI
     var mostrandoFormulario by remember { mutableStateOf(false) }
     val runrun = rememberScrollState()
-    var expanded by remember { mutableStateOf(false) }
+    var expandedFab by remember { mutableStateOf(false) }
     val context = LocalContext.current
 
-    Box(modifier = Modifier.fillMaxSize()) {
+    // 2. ESTADOS DEL FORMULARIO
+    var tituloTarea by remember { mutableStateOf("") }
+    var descripcionTarea by remember { mutableStateOf("") }
+    var tipoTareaStr by remember { mutableStateOf(TipoActividad.PROYECTO.name) }
+    var expandedDropdown by remember { mutableStateOf(false) }
+
+    // 3. OPCIONES ACTUALIZADAS
+    val opciones = listOf(
+        TipoActividad.PROYECTO.name to colorResource(id = R.color.purple_200),
+        TipoActividad.TAREA.name to colorResource(id = R.color.purple_700),
+        TipoActividad.EXAMEN.name to colorResource(id = R.color.teal_200)
+    )
+
+    // 4. LÓGICA DINÁMICA DE IMAGEN
+    val fruitType = activeFruit?.tipo
+    val imageRes = when (fruitType) {
+        TipoFruit.SANDIA -> R.drawable.sandia_fondo
+        TipoFruit.KIWI -> R.drawable.kiwi_fondo
+        TipoFruit.MANZANA -> R.drawable.manzana_fondo
+        else -> R.drawable.sandia_fondo
+    }
+
+    // Si activeFruit es null (lo que no debería pasar si PantallaInicio funciona), mostramos un loading
+    val isFruitLoading = activeFruit == null
+
+    Box(
+        modifier = modifier
+            .fillMaxSize()
+            .background(VerdeFondo)
+    ) {
         Column(
             modifier = Modifier
                 .fillMaxSize()
@@ -45,7 +114,6 @@ fun Pantalla1(modifier: Modifier = Modifier) {
         ) {
             Spacer(modifier = Modifier.height(40.dp))
 
-            // Primera fila
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -55,12 +123,14 @@ fun Pantalla1(modifier: Modifier = Modifier) {
                 horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.CenterVertically
             ) {
+                // Nombre
                 Text(
-                    text = "(Nombre)",
+                    text = activeFruit?.nombre ?: "Cargando...",
                     style = MaterialTheme.typography.titleMedium,
                     modifier = Modifier.padding(start = 12.dp)
                 )
 
+                // Nivel
                 Surface(
                     shape = CircleShape,
                     color = MaterialTheme.colorScheme.primary
@@ -69,12 +139,13 @@ fun Pantalla1(modifier: Modifier = Modifier) {
                         modifier = Modifier.size(36.dp),
                         contentAlignment = Alignment.Center
                     ) {
-                        Text("1", color = MaterialTheme.colorScheme.onPrimary)
+                        Text(activeFruit?.nivel?.toString() ?: "0", color = MaterialTheme.colorScheme.onPrimary)
                     }
                 }
 
+                // Experiencia
                 Text(
-                    text = "0 / 100 XP",
+                    text = "${activeFruit?.experiencia?.toInt() ?: 0} / 100 XP",
                     style = MaterialTheme.typography.titleMedium,
                     modifier = Modifier.padding(end = 12.dp)
                 )
@@ -82,18 +153,23 @@ fun Pantalla1(modifier: Modifier = Modifier) {
 
             Spacer(Modifier.height(16.dp))
 
-            // Imagen del Tamagochi
+            // Imagen del Fruit (DINÁMICA)
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
                     .fillMaxHeight(0.40f),
                 contentAlignment = Alignment.Center
             ) {
-                Image(
-                    painter = painterResource(id = R.drawable.sandia_fondo),
-                    contentDescription = "Mascota",
-                    modifier = Modifier.fillMaxSize()
-                )
+                if (isFruitLoading) {
+                    // Muestra un indicador de carga si la fruta aún no está disponible
+                    CircularProgressIndicator(modifier = Modifier.size(50.dp))
+                } else {
+                    Image(
+                        painter = painterResource(id = imageRes), // USA EL RECURSO DINÁMICO
+                        contentDescription = activeFruit?.nombre ?: "Mascota",
+                        modifier = Modifier.fillMaxSize()
+                    )
+                }
             }
 
             Spacer(Modifier.height(16.dp))
@@ -106,11 +182,11 @@ fun Pantalla1(modifier: Modifier = Modifier) {
             ) {
                 Column {
                     Text("Tareas", style = MaterialTheme.typography.titleLarge)
-                    Text("¿Qué tareas tenemos?")
+                    Text("Tienes ${tareas.filter { !it.tareaHecha }.size} tareas pendientes.")
                 }
 
                 Button(onClick = { mostrandoFormulario = !mostrandoFormulario }) {
-                    Text("Crear")
+                    Text(if (mostrandoFormulario) "Cancelar" else "Crear")
                 }
             }
 
@@ -118,17 +194,6 @@ fun Pantalla1(modifier: Modifier = Modifier) {
 
             // Formulario de creación de tareas
             if (mostrandoFormulario) {
-
-                var tituloTarea by remember { mutableStateOf("") }
-                var descripcionTarea by remember { mutableStateOf("") }
-                var tipoTarea by remember { mutableStateOf("") }
-                var expanded by remember { mutableStateOf(false) }
-
-                val opciones = listOf(
-                    "Examen" to colorResource(id = R.color.purple_200),
-                    "Proyecto" to colorResource(id = R.color.purple_700),
-                    "Tarea" to colorResource(id = R.color.teal_200)
-                )
 
                 OutlinedTextField(
                     value = tituloTarea,
@@ -148,21 +213,21 @@ fun Pantalla1(modifier: Modifier = Modifier) {
 
                 Spacer(Modifier.height(12.dp))
 
-                // Dropdown corregido
+                // Dropdown con los tipos de actividad
                 ExposedDropdownMenuBox(
-                    expanded = expanded,
-                    onExpandedChange = { expanded = !expanded },
+                    expanded = expandedDropdown,
+                    onExpandedChange = { expandedDropdown = !expandedDropdown },
                     modifier = Modifier.fillMaxWidth()
                 ) {
                     OutlinedTextField(
-                        value = tipoTarea,
+                        value = tipoTareaStr,
                         onValueChange = {},
                         readOnly = true,
                         label = { Text("Tipo tarea") },
-                        trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded) },
+                        trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = expandedDropdown) },
                         leadingIcon = {
                             val color =
-                                opciones.find { it.first == tipoTarea }?.second ?: Color.Transparent
+                                opciones.find { it.first == tipoTareaStr }?.second ?: Color.Transparent
                             Box(
                                 modifier = Modifier
                                     .size(12.dp)
@@ -175,11 +240,10 @@ fun Pantalla1(modifier: Modifier = Modifier) {
                     )
 
                     ExposedDropdownMenu(
-                        expanded = expanded,
-                        onDismissRequest = { expanded = false }
+                        expanded = expandedDropdown,
+                        onDismissRequest = { expandedDropdown = false }
                     ) {
                         opciones.forEach { (nombre, color) ->
-                            // Sintaxis corregida para Material 3
                             DropdownMenuItem(
                                 text = {
                                     Row(verticalAlignment = Alignment.CenterVertically) {
@@ -193,8 +257,8 @@ fun Pantalla1(modifier: Modifier = Modifier) {
                                     }
                                 },
                                 onClick = {
-                                    tipoTarea = nombre
-                                    expanded = false
+                                    tipoTareaStr = nombre
+                                    expandedDropdown = false
                                 }
                             )
                         }
@@ -207,6 +271,35 @@ fun Pantalla1(modifier: Modifier = Modifier) {
                     Text("Seleccionar fecha")
                 }
 
+                Spacer(Modifier.height(12.dp))
+
+                // Lógica de Guardar Tarea
+                Button(
+                    onClick = {
+                        activeFruit?.let { fruit ->
+                            if (tituloTarea.isNotBlank()) {
+                                val newTask = Task(
+                                    id = 0,
+                                    nombreTarea = tituloTarea,
+                                    descripcionTarea = descripcionTarea,
+                                    tipoActividad = TipoActividad.valueOf(tipoTareaStr),
+                                    fechaActividad = Date(),
+                                    estadoActividad = false,
+                                    tareaHecha = false,
+                                    fruitId = fruit.id
+                                )
+                                viewModel.insertTask(newTask)
+                                mostrandoFormulario = false
+                                tituloTarea = ""
+                                descripcionTarea = ""
+                            }
+                        }
+                    },
+                    enabled = activeFruit != null && tituloTarea.isNotBlank()
+                ) {
+                    Text("Guardar Tarea")
+                }
+
                 Spacer(Modifier.height(20.dp))
             }
 
@@ -217,51 +310,63 @@ fun Pantalla1(modifier: Modifier = Modifier) {
                     .padding(bottom = 100.dp),
                 verticalArrangement = Arrangement.spacedBy(12.dp)
             ) {
-                repeat(2) {
-                    Card(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .height(90.dp),
-                        shape = RoundedCornerShape(16.dp)
-                    ) {
-                        Row(
+                val tareasPendientes = tareas.filter { !it.tareaHecha }
+                if (tareasPendientes.isEmpty()) {
+                    Text("¡Todo al día! No tienes tareas pendientes.", style = MaterialTheme.typography.bodyLarge)
+                } else {
+                    tareasPendientes.forEach { task ->
+                        Card(
                             modifier = Modifier
-                                .fillMaxSize()
-                                .padding(12.dp),
-                            horizontalArrangement = Arrangement.SpaceBetween,
-                            verticalAlignment = Alignment.CenterVertically
+                                .fillMaxWidth()
+                                .height(90.dp),
+                            shape = RoundedCornerShape(16.dp)
                         ) {
-                            Column {
-                                Text("Proyecto PMDM", style = MaterialTheme.typography.titleMedium)
-                                Text(
-                                    "Entregar proyecto PMDM",
-                                    style = MaterialTheme.typography.bodyMedium
-                                )
-                                Row(verticalAlignment = Alignment.CenterVertically) {
-                                    Spacer(Modifier.width(4.dp))
-                                    Text("11/12/2025")
+                            Row(
+                                modifier = Modifier
+                                    .fillMaxSize()
+                                    .padding(12.dp),
+                                horizontalArrangement = Arrangement.SpaceBetween,
+                                verticalAlignment = Alignment.CenterVertically
+                            ) {
+                                Column {
+                                    Text(task.nombreTarea, style = MaterialTheme.typography.titleMedium)
+                                    Text(
+                                        task.descripcionTarea,
+                                        style = MaterialTheme.typography.bodyMedium
+                                    )
+                                    Row(verticalAlignment = Alignment.CenterVertically) {
+                                        Spacer(Modifier.width(4.dp))
+                                        Text(task.tipoActividad.name)
+                                    }
                                 }
-                            }
 
-                            Icon(
-                                imageVector = Icons.Filled.Check,
-                                contentDescription = "Completar",
-                                modifier = Modifier.size(32.dp)
-                            )
+                                // Botón Completar Tarea
+                                Icon(
+                                    imageVector = Icons.Filled.Check,
+                                    contentDescription = "Completar Tarea",
+                                    tint = MaterialTheme.colorScheme.primary,
+                                    modifier = Modifier
+                                        .size(32.dp)
+                                        .clickable {
+                                            viewModel.completarTarea(task)
+                                        }
+                                )
+                            }
                         }
                     }
                 }
             }
         }
 
+        // FABs
         Column(
             horizontalAlignment = Alignment.End,
-            verticalArrangement = Arrangement.spacedBy(16.dp, alignment = Alignment.Bottom), // hace que crezcan hacia arriba
+            verticalArrangement = Arrangement.spacedBy(16.dp, alignment = Alignment.Bottom),
             modifier = Modifier
                 .align(Alignment.BottomEnd)
-                .padding(bottom = 210.dp, end = 20.dp) // empieza desde arriba del FAB
+                .padding(bottom = 210.dp, end = 20.dp)
         ) {
-            if (expanded) {
+            if (expandedFab) {
                 // YouTube
                 FloatingActionButton(
                     onClick = {
@@ -282,7 +387,7 @@ fun Pantalla1(modifier: Modifier = Modifier) {
                 FloatingActionButton(
                     onClick = {
                         val intent = Intent(Intent.ACTION_SENDTO).apply {
-                            data = Uri.parse("mailto:") // Solo apps de correo
+                            data = Uri.parse("mailto:")
                         }
                         context.startActivity(intent)
                     },
@@ -296,7 +401,7 @@ fun Pantalla1(modifier: Modifier = Modifier) {
                     )
                 }
 
-                //  Instagram
+                // Instagram
                 FloatingActionButton(
                     onClick = {
                         val intent =
@@ -317,12 +422,12 @@ fun Pantalla1(modifier: Modifier = Modifier) {
 
         // FAB principal
         FloatingActionButton(
-            onClick = { expanded = !expanded },
+            onClick = { expandedFab = !expandedFab },
             containerColor = MaterialTheme.colorScheme.primary,
             contentColor = MaterialTheme.colorScheme.onPrimary,
             modifier = Modifier
                 .align(Alignment.BottomEnd)
-                .padding(bottom = 140.dp, end = 16.dp) // pequeño espacio desde la esquina
+                .padding(bottom = 140.dp, end = 16.dp)
         ) {
             Icon(
                 imageVector = Icons.Filled.Add,

@@ -2,26 +2,26 @@ package com.example.fruitask.ui.screens
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
+import androidx.compose.runtime.livedata.observeAsState
+import com.example.fruitask.data.local.database.MyViewModel
 
 @Composable
-fun PantallaInicio() {
-    // Estado que guarda la fruta seleccionada; null = aún no se ha elegido
-    var frutaSeleccionada by remember { mutableStateOf<String?>(null) }
+fun PantallaInicio(viewModel: MyViewModel) {
 
-    if (frutaSeleccionada == null) {
-        // Todavía no se ha elegido fruta → mostrar selección
+    val activeFruit by viewModel.activeFruit.observeAsState()
+
+    if (activeFruit == null) {
+
+        // Opción A: Es la primera ejecución, no hay fruta guardada.
+        // Muestra la pantalla de selección de personaje.
         PantallaEleccionPersonajes(
-            onFrutaSeleccionada = { fruta ->
-                frutaSeleccionada = fruta // ⚡ Cambiamos el estado → esto disparará el else
+            onFrutaSeleccionada = { tipoFruta, nombreFruta ->
+                viewModel.insertNewInitialFruit(nombreFruta, tipoFruta)
             }
         )
     } else {
-        // Ya se eligió fruta → mostrar la pantalla principal con menú
-        PantallaPrincipal()
+        // Opción B: Ya existe una fruta.
+        // Muestra la pantalla principal de juego.
+        PantallaPrincipal(viewModel = viewModel)
     }
 }
-
-
