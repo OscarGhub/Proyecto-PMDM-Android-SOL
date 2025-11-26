@@ -1,24 +1,17 @@
-package com.example.fruitask.data.local.database
+package com.example.fruitask.data.local.dao
 
 import androidx.room.Dao
-import androidx.room.Delete
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
-import androidx.room.Update
+import com.example.fruitask.data.local.entity.FruitEntity
 import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface FruitDao {
 
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    @Insert(onConflict = OnConflictStrategy.Companion.REPLACE)
     suspend fun insertarFruit(fruta: FruitEntity)
-
-    @Update
-    suspend fun updateFruit(fruta: FruitEntity)
-
-    @Delete
-    suspend fun deleteFruitById(fruitId: Int)
 
     @Query("SELECT * FROM fruit ORDER BY nombre ASC")
     fun getAllFruits(): Flow<List<FruitEntity>>
