@@ -3,9 +3,9 @@ package com.example.fruitask.ui.screens
 import Pantalla4
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.AccessTime
 import androidx.compose.material.icons.filled.CalendarToday
 import androidx.compose.material.icons.filled.Home
-import androidx.compose.material.icons.filled.AccessTime
 import androidx.compose.material.icons.filled.Share
 import androidx.compose.material3.Icon
 import androidx.compose.material3.NavigationBar
@@ -22,9 +22,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import com.example.fruitask.ui.theme.VerdeBoton
 import com.example.fruitask.ui.theme.VerdeFondo
+import com.example.fruitask.viewmodel.FruitViewModel
 
 @Composable
-fun PantallaPrincipal() {
+fun PantallaPrincipal(viewModel: FruitViewModel) {
     var selectedTab by remember { mutableIntStateOf(0) }
 
     // Lista de pestañas con íconos
@@ -72,7 +73,7 @@ fun PantallaPrincipal() {
         }
     ) { innerPadding ->
         when (selectedTab) {
-            0 -> Pantalla1(Modifier.padding(innerPadding))
+            0 -> Pantalla1(Modifier.padding(innerPadding), viewModel = viewModel)
             1 -> PantallaCalendario(Modifier.padding(innerPadding))
             2 -> Pantalla4(Modifier.padding(innerPadding))
             3 -> Pantalla2(Modifier.padding(innerPadding))

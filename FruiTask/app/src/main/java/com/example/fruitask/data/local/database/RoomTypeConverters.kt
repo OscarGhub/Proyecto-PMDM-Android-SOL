@@ -5,15 +5,15 @@ import com.example.fruitask.data.model.FruitType
 
 class RoomTypeConverters {
 
-    // Convierte el enum a String para guardarlo en SQLite
+    // Convierte el Enum FruitType a String para almacenarlo en la base de datos.
     @TypeConverter
     fun fromFruitType(type: FruitType): String {
         return type.name
     }
 
-    // Convierte la String de SQLite de vuelta al enum
+    // Convierte el String de la base de datos de vuelta al Enum FruitType.
     @TypeConverter
-    fun toFruitType(name: String): FruitType {
-        return FruitType.valueOf(name)
+    fun toFruitType(typeString: String): FruitType {
+        return FruitType.valueOf(typeString)
     }
 }
