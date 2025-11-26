@@ -20,9 +20,9 @@ class FruitViewModel(private val repository: FruitRepository) : ViewModel() {
             initialValue = emptyList()
         )
 
-    fun addFruit(id: Int, nombre: String, tipo: FruitType) {
+    fun addFruit(id: Int, nombre: String, tipo: FruitType, nivel: Int, experiencia: Double) {
         viewModelScope.launch {
-            val newFruit = Fruit(id = id, nombre = nombre, tipo = tipo)
+            val newFruit = Fruit(id = id, nombre = nombre, tipo = tipo, nivel = nivel, experiencia = experiencia)
 
             repository.insertarFruit(newFruit)
         }
