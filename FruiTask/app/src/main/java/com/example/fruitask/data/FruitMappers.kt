@@ -9,7 +9,8 @@ fun FruitEntity.toDomain(): Fruit {
     return Fruit(
         id = this.id,
         nombre = this.nombre,
-        tipo = this.tipo
+        tipo = this.tipo,
+
     )
 }
 
@@ -19,6 +20,6 @@ fun Fruit.toEntity(): FruitEntity {
     return FruitEntity(
         id = this.id,
         nombre = this.nombre,
-        tipo = this.tipo
+        tipo = this.tipo,
     )
 }

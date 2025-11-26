@@ -6,6 +6,7 @@ import androidx.room.Room
 import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
 import com.example.fruitask.data.local.dao.FruitDao
+import com.example.fruitask.data.local.dao.TaskDao
 import com.example.fruitask.data.local.entity.FruitEntity
 
 @Database(entities = [FruitEntity::class], version = 1, exportSchema = false)
@@ -13,6 +14,7 @@ import com.example.fruitask.data.local.entity.FruitEntity
 abstract class AppDatabase : RoomDatabase() {
 
     abstract fun fruitDao(): FruitDao
+    abstract fun TaskDao(): TaskDao
 
 
     companion object {
