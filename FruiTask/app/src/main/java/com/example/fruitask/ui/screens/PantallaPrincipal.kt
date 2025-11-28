@@ -1,16 +1,14 @@
 package com.example.fruitask.ui.screens
 
-import Pantalla4
+import Pantalla3
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AccessTime
 import androidx.compose.material.icons.filled.CalendarToday
 import androidx.compose.material.icons.filled.Home
-import androidx.compose.material.icons.filled.Share
 import androidx.compose.material3.Icon
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
-import androidx.compose.material3.NavigationBarItemDefaults
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -19,64 +17,39 @@ import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
-import com.example.fruitask.ui.theme.VerdeBoton
+import com.example.fruitask.data.local.database.MyViewModel
 import com.example.fruitask.ui.theme.VerdeFondo
-import com.example.fruitask.viewmodel.FruitViewModel
 
 @Composable
-fun PantallaPrincipal(viewModel: FruitViewModel) {
+fun PantallaPrincipal(viewModel: MyViewModel) {
+
     var selectedTab by remember { mutableIntStateOf(0) }
 
-    // Lista de pestañas con íconos
     val tabs = listOf(
-        Pair("", Icons.Filled.Home),
-        Pair("", Icons.Filled.CalendarToday),
-        Pair("", Icons.Filled.AccessTime),
-        Pair("", Icons.Filled.Share)
+        Pair("Home", Icons.Filled.Home),
+        Pair("Calendario", Icons.Filled.CalendarToday),
+        Pair("Horas", Icons.Filled.AccessTime)
     )
 
     Scaffold(
         containerColor = VerdeFondo,
         bottomBar = {
-            NavigationBar(
-                containerColor = VerdeBoton,
-                contentColor = Color.White 
-            ) {
+            NavigationBar {
                 tabs.forEachIndexed { index, tab ->
                     NavigationBarItem(
-                        icon = {
-                            Icon(
-                                tab.second,
-                                contentDescription = tab.first,
-                                tint = if (selectedTab == index) Color.White else Color.White.copy(alpha = 0.7f)
-                            )
-                        },
-                        label = {
-                            Text(
-                                tab.first,
-                                color = if (selectedTab == index) Color.White else Color.White.copy(alpha = 0.8f)
-                            )
-                        },
+                        icon = { Icon(tab.second, contentDescription = tab.first) },
+                        label = { Text(tab.first) },
                         selected = selectedTab == index,
-                        onClick = { selectedTab = index },
-                        colors = NavigationBarItemDefaults.colors(
-                            selectedIconColor = Color.White,
-                            selectedTextColor = Color.White,
-                            indicatorColor = VerdeBoton,
-                            unselectedIconColor = Color.White.copy(alpha = 0.6f),
-                            unselectedTextColor = Color.White.copy(alpha = 0.6f)
-                        )
+                        onClick = { selectedTab = index }
                     )
                 }
             }
         }
     ) { innerPadding ->
         when (selectedTab) {
-            0 -> Pantalla1(Modifier.padding(innerPadding), viewModel = viewModel)
-            1 -> PantallaCalendario(Modifier.padding(innerPadding))
-            2 -> Pantalla4(Modifier.padding(innerPadding))
-            3 -> Pantalla2(Modifier.padding(innerPadding))
+            0 -> Pantalla1(Modifier.padding(innerPadding), viewModel)
+            1 -> Pantalla2(Modifier.padding(innerPadding), viewModel)
+            2 -> Pantalla3(Modifier.padding(innerPadding), viewModel)
         }
     }
 }
