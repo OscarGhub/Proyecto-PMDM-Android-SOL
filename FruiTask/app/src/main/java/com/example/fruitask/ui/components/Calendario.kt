@@ -21,6 +21,9 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.example.fruitask.ui.theme.ColorExamen
+import com.example.fruitask.ui.theme.ColorProyecto
+import com.example.fruitask.ui.theme.ColorTarea
 import com.example.fruitask.ui.theme.VerdeBoton
 import com.example.fruitask.ui.theme.VerdeFondo
 import java.time.DayOfWeek
@@ -225,9 +228,9 @@ fun Dia(
     }
 
     val actividadColor = when (actividad?.tipo) {
-        TipoActividad.EXAMEN -> Color.Red.copy(alpha = 0.35f)
-        TipoActividad.PROYECTO -> Color.Blue.copy(alpha = 0.35f)
-        TipoActividad.TAREA -> Color.Green.copy(alpha = 0.35f)
+        TipoActividad.EXAMEN -> ColorExamen
+        TipoActividad.PROYECTO -> ColorProyecto
+        TipoActividad.TAREA -> ColorTarea
         else -> Color.Transparent
     }
 

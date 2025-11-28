@@ -13,3 +13,10 @@ val Pink40 = Color(0xFF7D5260)
 val VerdeFondo = Color(0xFFDBEFD0)
 
 val VerdeBoton = Color(0xFF56B48C)
+
+val ColorProyecto = Color(0xFF4A90E2)       // azul fresco
+val ColorTarea = Color(0xFF7ED957)          // verde lima
+val ColorExamen = Color(0xFFFF5A5F)         // rojo coral
+
+val ColorPendiente = Color(0xFFFABE59)      // amarillo mango
+val ColorCompletada = Color(0xFF6BCB77)     // verde menta éxito

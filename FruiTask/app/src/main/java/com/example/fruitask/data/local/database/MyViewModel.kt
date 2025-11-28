@@ -11,6 +11,7 @@ import com.example.fruitask.data.local.model.Task
 import com.example.fruitask.data.local.model.TipoFruit
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import java.util.Date
 
 class MyViewModel(application: Application) : AndroidViewModel(application) {
@@ -82,20 +83,45 @@ class MyViewModel(application: Application) : AndroidViewModel(application) {
         }
     }
 
-    fun completarTarea(task: Task) {
+    fun completarTarea(task: Task, onLevelUp: (Boolean) -> Unit) {
         viewModelScope.launch(Dispatchers.IO) {
-            // Lógica para actualizar el estado
+
+            var subeNivel = false
+
+            // 1. Marcar tarea como hecha
             val updatedTask = task.copy(tareaHecha = true)
             repository.updateTask(updatedTask)
 
-            activeFruit.value?.let { fruit ->
-                val newExp = fruit.experiencia + 5.0 // Dar 5 XP
-                val updatedFruit = fruit.copy(experiencia = newExp)
-                repository.updateFruit(updatedFruit)
+            // 2. Obtener la fruta activa
+            val fruit = activeFruit.value
+
+            if (fruit != null) {
+                val nuevaExp = fruit.experiencia + 20.0
+
+                if (nuevaExp >= 100) {
+                    // SUBE DE NIVEL
+                    val frutaActualizada = fruit.copy(
+                        nivel = fruit.nivel + 1,
+                        experiencia = 0.0
+                    )
+                    repository.updateFruit(frutaActualizada)
+                    subeNivel = true
+                } else {
+                    // SOLO SUMA XP
+                    val frutaActualizada = fruit.copy(
+                        experiencia = nuevaExp
+                    )
+                    repository.updateFruit(frutaActualizada)
+                }
                 cargarTodasLasFrutas()
             }
 
             cargarTodasLasTareas()
+            withContext(Dispatchers.Main) {
+                onLevelUp(subeNivel)
+            }
         }
     }
+
+
 }

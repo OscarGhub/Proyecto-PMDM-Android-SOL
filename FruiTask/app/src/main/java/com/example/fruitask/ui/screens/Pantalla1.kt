@@ -29,7 +29,9 @@ import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.ChevronRight
 import androidx.compose.material.icons.filled.MarkAsUnread
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -37,8 +39,10 @@ import androidx.compose.material3.ExposedDropdownMenuBox
 import androidx.compose.material3.ExposedDropdownMenuDefaults
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
+import androidx.compose.material3.LocalTextStyle
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -59,6 +63,14 @@ import com.example.fruitask.data.local.database.MyViewModel
 import com.example.fruitask.data.local.model.TipoActividad
 import com.example.fruitask.data.local.model.TipoFruit
 import com.example.fruitask.data.local.model.Task
+import com.example.fruitask.ui.components.MascotaBailando
+import com.example.fruitask.ui.components.getMensajeLogro
+import com.example.fruitask.ui.theme.ColorCompletada
+import com.example.fruitask.ui.theme.ColorExamen
+import com.example.fruitask.ui.theme.ColorPendiente
+import com.example.fruitask.ui.theme.ColorProyecto
+import com.example.fruitask.ui.theme.ColorTarea
+import com.example.fruitask.ui.theme.VerdeBoton
 import com.example.fruitask.ui.theme.VerdeFondo
 import java.util.Date
 
@@ -76,6 +88,13 @@ fun Pantalla1(modifier: Modifier = Modifier, viewModel: MyViewModel) {
     var expandedFab by remember { mutableStateOf(false) }
     val context = LocalContext.current
 
+    // ESTADO PARA MOSTRAR EL VIDEO DE BAILE
+    var showDance by remember { mutableStateOf(false) }
+
+    //ESTADO PARA MOSTRAR EL MENSAJE DE LOGRO
+    var mensajeLogro by remember { mutableStateOf<String?>(null) }
+
+
     // 2. ESTADOS DEL FORMULARIO
     var tituloTarea by remember { mutableStateOf("") }
     var descripcionTarea by remember { mutableStateOf("") }
@@ -84,9 +103,9 @@ fun Pantalla1(modifier: Modifier = Modifier, viewModel: MyViewModel) {
 
     // 3. OPCIONES ACTUALIZADAS
     val opciones = listOf(
-        TipoActividad.PROYECTO.name to colorResource(id = R.color.purple_200),
-        TipoActividad.TAREA.name to colorResource(id = R.color.purple_700),
-        TipoActividad.EXAMEN.name to colorResource(id = R.color.teal_200)
+        TipoActividad.PROYECTO.name to ColorProyecto,
+        TipoActividad.TAREA.name to ColorTarea,
+        TipoActividad.EXAMEN.name to ColorExamen
     )
 
     // 4. LÓGICA DINÁMICA DE IMAGEN
@@ -119,7 +138,7 @@ fun Pantalla1(modifier: Modifier = Modifier, viewModel: MyViewModel) {
                     .fillMaxWidth()
                     .padding(4.dp)
                     .height(60.dp)
-                    .border(2.dp, MaterialTheme.colorScheme.primary, RoundedCornerShape(12.dp)),
+                    .border(2.dp, VerdeBoton, RoundedCornerShape(12.dp)),
                 horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.CenterVertically
             ) {
@@ -133,13 +152,16 @@ fun Pantalla1(modifier: Modifier = Modifier, viewModel: MyViewModel) {
                 // Nivel
                 Surface(
                     shape = CircleShape,
-                    color = MaterialTheme.colorScheme.primary
+                    color = VerdeBoton
                 ) {
                     Box(
                         modifier = Modifier.size(36.dp),
                         contentAlignment = Alignment.Center
                     ) {
-                        Text(activeFruit?.nivel?.toString() ?: "0", color = MaterialTheme.colorScheme.onPrimary)
+                        Text(
+                            activeFruit?.nivel?.toString() ?: "0",
+                            color = MaterialTheme.colorScheme.onPrimary
+                        )
                     }
                 }
 
@@ -185,7 +207,10 @@ fun Pantalla1(modifier: Modifier = Modifier, viewModel: MyViewModel) {
                     Text("Tienes ${tareas.filter { !it.tareaHecha }.size} tareas pendientes.")
                 }
 
-                Button(onClick = { mostrandoFormulario = !mostrandoFormulario }) {
+                Button(onClick = { mostrandoFormulario = !mostrandoFormulario }, colors = ButtonDefaults.buttonColors(
+                    containerColor = VerdeBoton,
+                    contentColor = Color.White
+                )) {
                     Text(if (mostrandoFormulario) "Cancelar" else "Crear")
                 }
             }
@@ -198,7 +223,17 @@ fun Pantalla1(modifier: Modifier = Modifier, viewModel: MyViewModel) {
                 OutlinedTextField(
                     value = tituloTarea,
                     onValueChange = { tituloTarea = it },
-                    label = { Text("Título de la tarea") },
+                    label = { Text("Título de la tarea", color = Color.DarkGray) },
+                    textStyle = LocalTextStyle.current.copy(color = Color.Black),
+                    colors = OutlinedTextFieldDefaults.colors(
+                        focusedTextColor = Color.Black,
+                        unfocusedTextColor = Color.Black,
+                        focusedLabelColor = Color.DarkGray,
+                        unfocusedLabelColor = Color.Gray,
+                        focusedBorderColor = Color(0xFF333333),
+                        unfocusedBorderColor = Color(0xFF555555),
+                        cursorColor = Color.Black,
+                    ),
                     modifier = Modifier.fillMaxWidth()
                 )
 
@@ -207,7 +242,17 @@ fun Pantalla1(modifier: Modifier = Modifier, viewModel: MyViewModel) {
                 OutlinedTextField(
                     value = descripcionTarea,
                     onValueChange = { descripcionTarea = it },
-                    label = { Text("Descripción") },
+                    label = { Text("Descripción", color = Color.DarkGray) },
+                    textStyle = LocalTextStyle.current.copy(color = Color.Black),
+                    colors = OutlinedTextFieldDefaults.colors(
+                        focusedTextColor = Color.Black,
+                        unfocusedTextColor = Color.Black,
+                        focusedLabelColor = Color.DarkGray,
+                        unfocusedLabelColor = Color.Gray,
+                        focusedBorderColor = Color(0xFF333333),
+                        unfocusedBorderColor = Color(0xFF555555),
+                        cursorColor = Color.Black,
+                    ),
                     modifier = Modifier.fillMaxWidth()
                 )
 
@@ -224,10 +269,21 @@ fun Pantalla1(modifier: Modifier = Modifier, viewModel: MyViewModel) {
                         onValueChange = {},
                         readOnly = true,
                         label = { Text("Tipo tarea") },
+                        textStyle = LocalTextStyle.current.copy(color = Color.Black),
+                        colors = OutlinedTextFieldDefaults.colors(
+                            focusedTextColor = Color.Black,
+                            unfocusedTextColor = Color.Black,
+                            focusedLabelColor = Color.DarkGray,
+                            unfocusedLabelColor = Color.Gray,
+                            focusedBorderColor = Color(0xFF333333),
+                            unfocusedBorderColor = Color(0xFF555555),
+                            cursorColor = Color.Black,
+                        ),
                         trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = expandedDropdown) },
                         leadingIcon = {
                             val color =
-                                opciones.find { it.first == tipoTareaStr }?.second ?: Color.Transparent
+                                opciones.find { it.first == tipoTareaStr }?.second
+                                    ?: Color.Transparent
                             Box(
                                 modifier = Modifier
                                     .size(12.dp)
@@ -242,6 +298,7 @@ fun Pantalla1(modifier: Modifier = Modifier, viewModel: MyViewModel) {
                     ExposedDropdownMenu(
                         expanded = expandedDropdown,
                         onDismissRequest = { expandedDropdown = false }
+
                     ) {
                         opciones.forEach { (nombre, color) ->
                             DropdownMenuItem(
@@ -253,7 +310,7 @@ fun Pantalla1(modifier: Modifier = Modifier, viewModel: MyViewModel) {
                                                 .background(color, CircleShape)
                                         )
                                         Spacer(modifier = Modifier.width(8.dp))
-                                        Text(nombre)
+                                        Text(nombre, color = Color.Black)
                                     }
                                 },
                                 onClick = {
@@ -264,10 +321,15 @@ fun Pantalla1(modifier: Modifier = Modifier, viewModel: MyViewModel) {
                         }
                     }
                 }
-
+   
                 Spacer(Modifier.height(12.dp))
 
-                Button(onClick = { /* seleccionar fecha */ }) {
+                Button(
+                    onClick = { /* seleccionar fecha */ }, colors = ButtonDefaults.buttonColors(
+                        containerColor = VerdeBoton,
+                        contentColor = Color.White
+                    )
+                ) {
                     Text("Seleccionar fecha")
                 }
 
@@ -294,7 +356,10 @@ fun Pantalla1(modifier: Modifier = Modifier, viewModel: MyViewModel) {
                                 descripcionTarea = ""
                             }
                         }
-                    },
+                    },colors = ButtonDefaults.buttonColors(
+                        containerColor = VerdeBoton,
+                        contentColor = Color.White
+                    ),
                     enabled = activeFruit != null && tituloTarea.isNotBlank()
                 ) {
                     Text("Guardar Tarea")
@@ -311,16 +376,29 @@ fun Pantalla1(modifier: Modifier = Modifier, viewModel: MyViewModel) {
                 verticalArrangement = Arrangement.spacedBy(12.dp)
             ) {
                 val tareasPendientes = tareas.filter { !it.tareaHecha }
+
                 if (tareasPendientes.isEmpty()) {
-                    Text("¡Todo al día! No tienes tareas pendientes.", style = MaterialTheme.typography.bodyLarge)
+                    Text(
+                        "¡Todo al día! No tienes tareas pendientes.",
+                        style = MaterialTheme.typography.bodyLarge
+                    )
                 } else {
                     tareasPendientes.forEach { task ->
+                        val colorTipo = when (task.tipoActividad) {
+                            TipoActividad.PROYECTO -> ColorProyecto
+                            TipoActividad.TAREA -> ColorTarea
+                            TipoActividad.EXAMEN -> ColorExamen
+                        }
+
+
+                        // TARJETA
                         Card(
                             modifier = Modifier
                                 .fillMaxWidth()
-                                .height(90.dp),
+                                .height(100.dp),
                             shape = RoundedCornerShape(16.dp)
                         ) {
+
                             Row(
                                 modifier = Modifier
                                     .fillMaxSize()
@@ -328,27 +406,59 @@ fun Pantalla1(modifier: Modifier = Modifier, viewModel: MyViewModel) {
                                 horizontalArrangement = Arrangement.SpaceBetween,
                                 verticalAlignment = Alignment.CenterVertically
                             ) {
-                                Column {
-                                    Text(task.nombreTarea, style = MaterialTheme.typography.titleMedium)
-                                    Text(
-                                        task.descripcionTarea,
-                                        style = MaterialTheme.typography.bodyMedium
+
+
+                                Row(verticalAlignment = Alignment.CenterVertically) {
+
+                                    Box(
+                                        modifier = Modifier
+                                            .size(14.dp)
+                                            .background(colorTipo, CircleShape)
                                     )
-                                    Row(verticalAlignment = Alignment.CenterVertically) {
-                                        Spacer(Modifier.width(4.dp))
-                                        Text(task.tipoActividad.name)
+
+                                    Spacer(Modifier.width(10.dp))
+
+                                    Column {
+                                        Text(
+                                            text = task.nombreTarea,
+                                            style = MaterialTheme.typography.titleMedium,
+                                            color = Color.Black
+                                        )
+
+                                        Text(
+                                            text = task.descripcionTarea,
+                                            style = MaterialTheme.typography.bodyMedium,
+                                            color = Color.DarkGray
+                                        )
+
+                                        Text(
+                                            text = task.tipoActividad.name,
+                                            color = colorTipo,
+                                            style = MaterialTheme.typography.labelMedium
+                                        )
                                     }
                                 }
 
-                                // Botón Completar Tarea
+                                //ICONO DE COMPLETAR
                                 Icon(
                                     imageVector = Icons.Filled.Check,
                                     contentDescription = "Completar Tarea",
-                                    tint = MaterialTheme.colorScheme.primary,
+                                    tint = VerdeBoton,
                                     modifier = Modifier
                                         .size(32.dp)
                                         .clickable {
-                                            viewModel.completarTarea(task)
+
+                                            viewModel.completarTarea(task) { subeNivel ->
+
+                                                if (subeNivel) {
+                                                    val nivelNuevo = activeFruit?.nivel ?: 0
+                                                    mensajeLogro = getMensajeLogro(
+                                                        activeFruit?.tipo,
+                                                        nivelNuevo
+                                                    )
+                                                    showDance = true
+                                                }
+                                            }
                                         }
                                 )
                             }
@@ -373,8 +483,6 @@ fun Pantalla1(modifier: Modifier = Modifier, viewModel: MyViewModel) {
                         val intent = Intent(Intent.ACTION_VIEW, Uri.parse("https://www.youtube.com/"))
                         context.startActivity(intent)
                     },
-                    containerColor = Color(0xFFFF0000),
-                    contentColor = Color.White,
                     modifier = Modifier.size(48.dp)
                 ) {
                     Icon(
@@ -423,8 +531,8 @@ fun Pantalla1(modifier: Modifier = Modifier, viewModel: MyViewModel) {
         // FAB principal
         FloatingActionButton(
             onClick = { expandedFab = !expandedFab },
-            containerColor = MaterialTheme.colorScheme.primary,
-            contentColor = MaterialTheme.colorScheme.onPrimary,
+            containerColor = VerdeBoton,
+            contentColor = Color.White,
             modifier = Modifier
                 .align(Alignment.BottomEnd)
                 .padding(bottom = 140.dp, end = 16.dp)
@@ -434,5 +542,27 @@ fun Pantalla1(modifier: Modifier = Modifier, viewModel: MyViewModel) {
                 contentDescription = "Abrir redes"
             )
         }
+
+        //POPUP CON VIDEO DEL BAILE
+        if (showDance) {
+
+            val videoRes = when (activeFruit?.tipo) {
+                TipoFruit.KIWI -> R.raw.kiwi_dance
+                TipoFruit.MANZANA -> R.raw.manzana_dance
+                TipoFruit.SANDIA -> R.raw.sandia_dance
+                else -> R.raw.kiwi_dance
+
+            }
+
+            MascotaBailando(
+                videoRes = videoRes,
+                message = mensajeLogro,
+                onFinished = {
+                    showDance = false
+                    mensajeLogro = null
+                }
+            )
+        }
     }
+
 }
