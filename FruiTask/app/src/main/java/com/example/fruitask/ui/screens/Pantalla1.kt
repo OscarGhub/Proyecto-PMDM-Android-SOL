@@ -573,7 +573,7 @@ fun Pantalla1(modifier: Modifier = Modifier, viewModel: MyViewModel) {
             }
         }
 
-        // ⬇⬇⬇ Mascota bailando ⬇⬇⬇
+        // ⬇⬇⬇ Mascota bailandooo ⬇⬇⬇
         if (showDance) {
             val videoRes = when (activeFruit?.tipo) {
                 TipoFruit.KIWI -> R.raw.kiwi_dance
