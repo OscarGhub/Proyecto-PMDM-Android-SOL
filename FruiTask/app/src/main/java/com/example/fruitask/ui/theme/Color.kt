@@ -12,6 +12,7 @@ val Pink40 = Color(0xFF7D5260)
 
 val VerdeFondo = Color(0xFFDBEFD0)
 
+val Negrocheck = Color(0xFF000000)
 val VerdeBoton = Color(0xFF56B48C)
 
 val ColorProyecto = Color(0xFF4A90E2)       // azul fresco

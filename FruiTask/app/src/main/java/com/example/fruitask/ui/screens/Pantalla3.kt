@@ -1,4 +1,5 @@
 import android.os.CountDownTimer
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -7,9 +8,11 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.example.fruitask.R
 import com.example.fruitask.data.local.database.MyViewModel
 import com.example.fruitask.ui.components.NumeroWheel
 import com.example.fruitask.ui.theme.VerdeBoton
@@ -65,13 +68,18 @@ fun Pantalla3(modifier: Modifier = Modifier, viewModel: MyViewModel) {
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.spacedBy(25.dp)
         ) {
-            Text(
-                text = "Temporizador",
-                style = MaterialTheme.typography.headlineMedium.copy(
-                    fontWeight = FontWeight.ExtraBold,
-                    fontSize = 30.sp
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(200.dp),
+                contentAlignment = Alignment.Center
+            ) {
+                Image(
+                    painter = painterResource(id = R.drawable.temporizadorletrero),
+                    contentDescription = "Mascota",
+                    modifier = Modifier.fillMaxSize()
                 )
-            )
+            }
 
             // Ruedas solo si el temporizador NO está activo ni pausado
             if (!temporizadorActivo && !temporizadorPausado) {

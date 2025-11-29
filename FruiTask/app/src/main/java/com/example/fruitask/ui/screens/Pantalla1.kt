@@ -1,60 +1,25 @@
 package com.example.fruitask.ui.screens
 
 import android.content.Intent
+import android.media.MediaPlayer
 import android.net.Uri
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxHeight
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Add
-import androidx.compose.material.icons.filled.CameraAlt
-import androidx.compose.material.icons.filled.Check
-import androidx.compose.material.icons.filled.ChevronRight
-import androidx.compose.material.icons.filled.MarkAsUnread
-import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.Card
-import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.DropdownMenuItem
-import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.ExposedDropdownMenuBox
-import androidx.compose.material3.ExposedDropdownMenuDefaults
-import androidx.compose.material3.FloatingActionButton
-import androidx.compose.material3.Icon
-import androidx.compose.material3.LocalTextStyle
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedTextField
-import androidx.compose.material3.OutlinedTextFieldDefaults
-import androidx.compose.material3.Surface
-import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
+import androidx.compose.material.icons.filled.*
+import androidx.compose.material3.*
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.runtime.livedata.observeAsState
@@ -65,50 +30,47 @@ import com.example.fruitask.data.local.model.TipoFruit
 import com.example.fruitask.data.local.model.Task
 import com.example.fruitask.ui.components.MascotaBailando
 import com.example.fruitask.ui.components.getMensajeLogro
-import com.example.fruitask.ui.theme.ColorCompletada
-import com.example.fruitask.ui.theme.ColorExamen
-import com.example.fruitask.ui.theme.ColorPendiente
-import com.example.fruitask.ui.theme.ColorProyecto
-import com.example.fruitask.ui.theme.ColorTarea
-import com.example.fruitask.ui.theme.VerdeBoton
-import com.example.fruitask.ui.theme.VerdeFondo
+import com.example.fruitask.ui.theme.*
+
 import java.util.Date
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun Pantalla1(modifier: Modifier = Modifier, viewModel: MyViewModel) {
 
-    // 1. OBSERVACIÓN DE DATOS
     val activeFruit by viewModel.activeFruit.observeAsState()
     val tareas by viewModel.taskList.observeAsState(initial = emptyList())
 
-    // Estados UI
     var mostrandoFormulario by remember { mutableStateOf(false) }
     val runrun = rememberScrollState()
     var expandedFab by remember { mutableStateOf(false) }
     val context = LocalContext.current
 
-    // ESTADO PARA MOSTRAR EL VIDEO DE BAILE
     var showDance by remember { mutableStateOf(false) }
-
-    //ESTADO PARA MOSTRAR EL MENSAJE DE LOGRO
     var mensajeLogro by remember { mutableStateOf<String?>(null) }
 
-
-    // 2. ESTADOS DEL FORMULARIO
     var tituloTarea by remember { mutableStateOf("") }
     var descripcionTarea by remember { mutableStateOf("") }
     var tipoTareaStr by remember { mutableStateOf(TipoActividad.PROYECTO.name) }
     var expandedDropdown by remember { mutableStateOf(false) }
 
-    // 3. OPCIONES ACTUALIZADAS
+    var mostrarCalendario by remember { mutableStateOf(false) }
+    var fechaSeleccionada by remember { mutableStateOf<Date?>(null) }
+    val datePickerState = rememberDatePickerState(
+        selectableDates = object : androidx.compose.material3.SelectableDates {
+            override fun isSelectableDate(utcTimeMillis: Long): Boolean {
+                val hoy = System.currentTimeMillis()
+                return utcTimeMillis >= hoy - 86_400_000
+            }
+        }
+    )
+
     val opciones = listOf(
         TipoActividad.PROYECTO.name to ColorProyecto,
         TipoActividad.TAREA.name to ColorTarea,
         TipoActividad.EXAMEN.name to ColorExamen
     )
 
-    // 4. LÓGICA DINÁMICA DE IMAGEN
     val fruitType = activeFruit?.tipo
     val imageRes = when (fruitType) {
         TipoFruit.SANDIA -> R.drawable.sandia_fondo
@@ -117,8 +79,11 @@ fun Pantalla1(modifier: Modifier = Modifier, viewModel: MyViewModel) {
         else -> R.drawable.sandia_fondo
     }
 
-    // Si activeFruit es null (lo que no debería pasar si PantallaInicio funciona), mostramos un loading
     val isFruitLoading = activeFruit == null
+
+    // ⬇⬇⬇ ESTADOS PARA EASTER EGG ⬇⬇⬇
+    var clickCount by remember { mutableStateOf(0) }
+    var showEasterEgg by remember { mutableStateOf(false) }
 
     Box(
         modifier = modifier
@@ -131,7 +96,7 @@ fun Pantalla1(modifier: Modifier = Modifier, viewModel: MyViewModel) {
                 .verticalScroll(runrun)
                 .padding(16.dp)
         ) {
-            Spacer(modifier = Modifier.height(40.dp))
+            Spacer(modifier = Modifier.height(20.dp))
 
             Row(
                 modifier = Modifier
@@ -142,14 +107,12 @@ fun Pantalla1(modifier: Modifier = Modifier, viewModel: MyViewModel) {
                 horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                // Nombre
                 Text(
                     text = activeFruit?.nombre ?: "Cargando...",
                     style = MaterialTheme.typography.titleMedium,
                     modifier = Modifier.padding(start = 12.dp)
                 )
 
-                // Nivel
                 Surface(
                     shape = CircleShape,
                     color = VerdeBoton
@@ -165,7 +128,6 @@ fun Pantalla1(modifier: Modifier = Modifier, viewModel: MyViewModel) {
                     }
                 }
 
-                // Experiencia
                 Text(
                     text = "${activeFruit?.experiencia?.toInt() ?: 0} / 100 XP",
                     style = MaterialTheme.typography.titleMedium,
@@ -175,19 +137,28 @@ fun Pantalla1(modifier: Modifier = Modifier, viewModel: MyViewModel) {
 
             Spacer(Modifier.height(16.dp))
 
-            // Imagen del Fruit (DINÁMICA)
+            // ⬇⬇⬇ BOX DE LA FRUTA CON EASTER EGG ⬇⬇⬇
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .fillMaxHeight(0.40f),
+                    .fillMaxHeight(0.40f)
+                    .clickable {
+                        clickCount++
+                        if (clickCount >= 10) {
+                            showEasterEgg = true
+                            clickCount = 0
+
+                            val mediaPlayer = MediaPlayer.create(context, R.raw.secreto)
+                            mediaPlayer.start()
+                        }
+                    },
                 contentAlignment = Alignment.Center
             ) {
                 if (isFruitLoading) {
-                    // Muestra un indicador de carga si la fruta aún no está disponible
                     CircularProgressIndicator(modifier = Modifier.size(50.dp))
                 } else {
                     Image(
-                        painter = painterResource(id = imageRes), // USA EL RECURSO DINÁMICO
+                        painter = painterResource(id = imageRes),
                         contentDescription = activeFruit?.nombre ?: "Mascota",
                         modifier = Modifier.fillMaxSize()
                     )
@@ -196,7 +167,7 @@ fun Pantalla1(modifier: Modifier = Modifier, viewModel: MyViewModel) {
 
             Spacer(Modifier.height(16.dp))
 
-            // Creación de tareas
+            // ⬇⬇⬇ FORMULARIO DE TAREAS ⬇⬇⬇
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceBetween,
@@ -207,17 +178,19 @@ fun Pantalla1(modifier: Modifier = Modifier, viewModel: MyViewModel) {
                     Text("Tienes ${tareas.filter { !it.tareaHecha }.size} tareas pendientes.")
                 }
 
-                Button(onClick = { mostrandoFormulario = !mostrandoFormulario }, colors = ButtonDefaults.buttonColors(
-                    containerColor = VerdeBoton,
-                    contentColor = Color.White
-                )) {
+                Button(
+                    onClick = { mostrandoFormulario = !mostrandoFormulario },
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = VerdeBoton,
+                        contentColor = Color.White
+                    )
+                ) {
                     Text(if (mostrandoFormulario) "Cancelar" else "Crear")
                 }
             }
 
             Spacer(Modifier.height(16.dp))
 
-            // Formulario de creación de tareas
             if (mostrandoFormulario) {
 
                 OutlinedTextField(
@@ -233,6 +206,7 @@ fun Pantalla1(modifier: Modifier = Modifier, viewModel: MyViewModel) {
                         focusedBorderColor = Color(0xFF333333),
                         unfocusedBorderColor = Color(0xFF555555),
                         cursorColor = Color.Black,
+
                     ),
                     modifier = Modifier.fillMaxWidth()
                 )
@@ -258,7 +232,6 @@ fun Pantalla1(modifier: Modifier = Modifier, viewModel: MyViewModel) {
 
                 Spacer(Modifier.height(12.dp))
 
-                // Dropdown con los tipos de actividad
                 ExposedDropdownMenuBox(
                     expanded = expandedDropdown,
                     onExpandedChange = { expandedDropdown = !expandedDropdown },
@@ -297,7 +270,8 @@ fun Pantalla1(modifier: Modifier = Modifier, viewModel: MyViewModel) {
 
                     ExposedDropdownMenu(
                         expanded = expandedDropdown,
-                        onDismissRequest = { expandedDropdown = false }
+                        onDismissRequest = { expandedDropdown = false },
+                        containerColor = VerdeFondo
 
                     ) {
                         opciones.forEach { (nombre, color) ->
@@ -321,21 +295,45 @@ fun Pantalla1(modifier: Modifier = Modifier, viewModel: MyViewModel) {
                         }
                     }
                 }
-   
+
                 Spacer(Modifier.height(12.dp))
 
                 Button(
-                    onClick = { /* seleccionar fecha */ }, colors = ButtonDefaults.buttonColors(
+                    onClick = { mostrarCalendario = true },
+                    colors = ButtonDefaults.buttonColors(
                         containerColor = VerdeBoton,
                         contentColor = Color.White
                     )
                 ) {
-                    Text("Seleccionar fecha")
+                    Text(
+                        fechaSeleccionada?.toString() ?: "Seleccionar fecha"
+                    )
+                }
+
+                if (mostrarCalendario) {
+                    DatePickerDialog(
+                        onDismissRequest = { mostrarCalendario = false },
+                        confirmButton = {
+                            Button(onClick = {
+                                val millis = datePickerState.selectedDateMillis
+                                if (millis != null) fechaSeleccionada = Date(millis)
+                                mostrarCalendario = false
+                            }) {
+                                Text("Aceptar")
+                            }
+                        },
+                        dismissButton = {
+                            Button(onClick = { mostrarCalendario = false }) {
+                                Text("Cancelar")
+                            }
+                        }
+                    ) {
+                        DatePicker(state = datePickerState)
+                    }
                 }
 
                 Spacer(Modifier.height(12.dp))
 
-                // Lógica de Guardar Tarea
                 Button(
                     onClick = {
                         activeFruit?.let { fruit ->
@@ -345,7 +343,7 @@ fun Pantalla1(modifier: Modifier = Modifier, viewModel: MyViewModel) {
                                     nombreTarea = tituloTarea,
                                     descripcionTarea = descripcionTarea,
                                     tipoActividad = TipoActividad.valueOf(tipoTareaStr),
-                                    fechaActividad = Date(),
+                                    fechaActividad = fechaSeleccionada ?: Date(),
                                     estadoActividad = false,
                                     tareaHecha = false,
                                     fruitId = fruit.id
@@ -354,9 +352,11 @@ fun Pantalla1(modifier: Modifier = Modifier, viewModel: MyViewModel) {
                                 mostrandoFormulario = false
                                 tituloTarea = ""
                                 descripcionTarea = ""
+                                fechaSeleccionada = null
                             }
                         }
-                    },colors = ButtonDefaults.buttonColors(
+                    },
+                    colors = ButtonDefaults.buttonColors(
                         containerColor = VerdeBoton,
                         contentColor = Color.White
                     ),
@@ -368,7 +368,7 @@ fun Pantalla1(modifier: Modifier = Modifier, viewModel: MyViewModel) {
                 Spacer(Modifier.height(20.dp))
             }
 
-            // Lista de tareas
+            // ⬇⬇⬇ LISTA DE TAREAS ⬇⬇⬇
             Column(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -390,15 +390,15 @@ fun Pantalla1(modifier: Modifier = Modifier, viewModel: MyViewModel) {
                             TipoActividad.EXAMEN -> ColorExamen
                         }
 
-
-                        // TARJETA
                         Card(
                             modifier = Modifier
                                 .fillMaxWidth()
                                 .height(100.dp),
-                            shape = RoundedCornerShape(16.dp)
+                            shape = RoundedCornerShape(16.dp),
+                            colors = CardDefaults.cardColors(
+                                containerColor = VerdeBoton
+                            )
                         ) {
-
                             Row(
                                 modifier = Modifier
                                     .fillMaxSize()
@@ -406,10 +406,7 @@ fun Pantalla1(modifier: Modifier = Modifier, viewModel: MyViewModel) {
                                 horizontalArrangement = Arrangement.SpaceBetween,
                                 verticalAlignment = Alignment.CenterVertically
                             ) {
-
-
                                 Row(verticalAlignment = Alignment.CenterVertically) {
-
                                     Box(
                                         modifier = Modifier
                                             .size(14.dp)
@@ -436,20 +433,25 @@ fun Pantalla1(modifier: Modifier = Modifier, viewModel: MyViewModel) {
                                             color = colorTipo,
                                             style = MaterialTheme.typography.labelMedium
                                         )
+
+                                        task.fechaActividad?.let { fecha ->
+                                            Text(
+                                                text = android.text.format.DateFormat.format("dd/MM/yyyy", fecha).toString(),
+                                                style = MaterialTheme.typography.bodySmall,
+                                                color = Color.DarkGray
+                                            )
+                                        }
                                     }
                                 }
 
-                                //ICONO DE COMPLETAR
                                 Icon(
                                     imageVector = Icons.Filled.Check,
                                     contentDescription = "Completar Tarea",
-                                    tint = VerdeBoton,
+                                    tint = Negrocheck,
                                     modifier = Modifier
                                         .size(32.dp)
                                         .clickable {
-
                                             viewModel.completarTarea(task) { subeNivel ->
-
                                                 if (subeNivel) {
                                                     val nivelNuevo = activeFruit?.nivel ?: 0
                                                     mensajeLogro = getMensajeLogro(
@@ -468,7 +470,7 @@ fun Pantalla1(modifier: Modifier = Modifier, viewModel: MyViewModel) {
             }
         }
 
-        // FABs
+        // ⬇⬇⬇ FABs ⬇⬇⬇
         Column(
             horizontalAlignment = Alignment.End,
             verticalArrangement = Arrangement.spacedBy(16.dp, alignment = Alignment.Bottom),
@@ -477,7 +479,7 @@ fun Pantalla1(modifier: Modifier = Modifier, viewModel: MyViewModel) {
                 .padding(bottom = 210.dp, end = 20.dp)
         ) {
             if (expandedFab) {
-                // YouTube
+
                 FloatingActionButton(
                     onClick = {
                         val intent = Intent(Intent.ACTION_VIEW, Uri.parse("https://www.youtube.com/"))
@@ -491,7 +493,6 @@ fun Pantalla1(modifier: Modifier = Modifier, viewModel: MyViewModel) {
                     )
                 }
 
-                // Correo
                 FloatingActionButton(
                     onClick = {
                         val intent = Intent(Intent.ACTION_SENDTO).apply {
@@ -509,7 +510,6 @@ fun Pantalla1(modifier: Modifier = Modifier, viewModel: MyViewModel) {
                     )
                 }
 
-                // Instagram
                 FloatingActionButton(
                     onClick = {
                         val intent =
@@ -528,7 +528,6 @@ fun Pantalla1(modifier: Modifier = Modifier, viewModel: MyViewModel) {
             }
         }
 
-        // FAB principal
         FloatingActionButton(
             onClick = { expandedFab = !expandedFab },
             containerColor = VerdeBoton,
@@ -543,15 +542,44 @@ fun Pantalla1(modifier: Modifier = Modifier, viewModel: MyViewModel) {
             )
         }
 
-        //POPUP CON VIDEO DEL BAILE
-        if (showDance) {
+        // ⬇⬇⬇ DIALOG DEL EASTER EGG ⬇⬇⬇
+        if (showEasterEgg) {
+            Box(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .background(Color.Black.copy(alpha = 0.5f)),
+                contentAlignment = Alignment.Center
+            ) {
+                Card(
+                    shape = RoundedCornerShape(16.dp),
+                    colors = CardDefaults.cardColors(containerColor = Color.White),
+                    modifier = Modifier.padding(16.dp)
+                ) {
+                    Column(
+                        modifier = Modifier.padding(24.dp),
+                        horizontalAlignment = Alignment.CenterHorizontally
+                    ) {
+                        Text(
+                            text = "¡Vamos, suerte estudiando!",
+                            style = MaterialTheme.typography.titleLarge,
+                            color = Color.Black
+                        )
+                        Spacer(modifier = Modifier.height(12.dp))
+                        Button(onClick = { showEasterEgg = false }) {
+                            Text("Cerrar")
+                        }
+                    }
+                }
+            }
+        }
 
+        // ⬇⬇⬇ Mascota bailando ⬇⬇⬇
+        if (showDance) {
             val videoRes = when (activeFruit?.tipo) {
                 TipoFruit.KIWI -> R.raw.kiwi_dance
                 TipoFruit.MANZANA -> R.raw.manzana_dance
                 TipoFruit.SANDIA -> R.raw.sandia_dance
                 else -> R.raw.kiwi_dance
-
             }
 
             MascotaBailando(
@@ -564,5 +592,4 @@ fun Pantalla1(modifier: Modifier = Modifier, viewModel: MyViewModel) {
             )
         }
     }
-
 }
