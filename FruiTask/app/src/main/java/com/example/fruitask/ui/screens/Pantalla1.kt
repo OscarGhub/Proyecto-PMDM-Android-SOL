@@ -81,9 +81,11 @@ fun Pantalla1(modifier: Modifier = Modifier, viewModel: MyViewModel) {
 
     val isFruitLoading = activeFruit == null
 
-    // ⬇⬇⬇ ESTADOS PARA EASTER EGG ⬇⬇⬇
+    //ESTADOS PARA EASTER EGG
     var clickCount by remember { mutableStateOf(0) }
     var showEasterEgg by remember { mutableStateOf(false) }
+
+
 
     Box(
         modifier = modifier
@@ -137,7 +139,7 @@ fun Pantalla1(modifier: Modifier = Modifier, viewModel: MyViewModel) {
 
             Spacer(Modifier.height(16.dp))
 
-            // ⬇⬇⬇ BOX DE LA FRUTA CON EASTER EGG ⬇⬇⬇
+            // BOX DE LA FRUTA CON EASTER EGG
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -167,7 +169,7 @@ fun Pantalla1(modifier: Modifier = Modifier, viewModel: MyViewModel) {
 
             Spacer(Modifier.height(16.dp))
 
-            // ⬇⬇⬇ FORMULARIO DE TAREAS ⬇⬇⬇
+            //FORMULARIO DE TAREAS
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceBetween,

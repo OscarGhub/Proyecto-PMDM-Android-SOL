@@ -5,9 +5,13 @@ import android.Manifest
 import android.content.pm.PackageManager
 import android.os.Build
 import android.os.Bundle
+import android.widget.Toast
 import androidx.activity.ComponentActivity
+import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.runtime.LaunchedEffect
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -23,7 +27,9 @@ import com.example.fruitask.ui.screens.PantallaPrincipal
 import com.example.fruitask.ui.theme.FruiTaskTheme
 import java.util.concurrent.TimeUnit
 
+
 class MainActivity : ComponentActivity() {
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
@@ -52,6 +58,7 @@ class MainActivity : ComponentActivity() {
             }
         }
 
+
         // Crear work request periódico cada 15 minutos
         val workRequest = PeriodicWorkRequestBuilder<NotificacionWorker>(15, TimeUnit.MINUTES)
             .build()
@@ -64,3 +71,5 @@ class MainActivity : ComponentActivity() {
         )
     }
 }
+
+

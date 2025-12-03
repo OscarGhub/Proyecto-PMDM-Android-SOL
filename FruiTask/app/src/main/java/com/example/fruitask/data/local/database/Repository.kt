@@ -71,9 +71,4 @@ class FruitTaskRepository(context: Context) {
         return dbHelper.deleteTask(taskId) // Ya modificado para no cerrar
     }
 
-    // Método opcional para cerrar la base de datos cuando ya no se necesite
-    fun close() {
-        database?.close()
-        database = null
-    }
 }

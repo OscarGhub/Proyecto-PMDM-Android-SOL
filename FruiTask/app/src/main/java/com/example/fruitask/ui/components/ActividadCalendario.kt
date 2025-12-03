@@ -1,5 +1,6 @@
 package com.example.fruitask.ui.components
 
+import com.example.fruitask.data.local.model.TipoActividad
 
 
 data class ActividadCalendario(

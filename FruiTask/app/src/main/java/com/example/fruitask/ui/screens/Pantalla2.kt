@@ -20,7 +20,6 @@ import com.example.fruitask.data.local.model.TipoActividad as TipoActividadModel
 import com.example.fruitask.data.local.model.Task
 import com.example.fruitask.ui.components.ActividadCalendario
 import com.example.fruitask.ui.components.Calendario
-import com.example.fruitask.ui.components.TipoActividad
 import com.example.fruitask.ui.theme.VerdeFondo
 import java.util.*
 
@@ -35,11 +34,10 @@ fun Pantalla2(modifier: Modifier = Modifier, viewModel: MyViewModel) {
     val actividades = tareas.filter { !it.tareaHecha }.map { tarea: Task ->
         val cal = Calendar.getInstance().apply { time = tarea.fechaActividad ?: Date() }
 
-        // Convertir TipoActividad de data.model a ui.components
         val tipoCalendario = when (tarea.tipoActividad) {
-            TipoActividadModel.EXAMEN -> TipoActividad.EXAMEN
-            TipoActividadModel.PROYECTO -> TipoActividad.PROYECTO
-            TipoActividadModel.TAREA -> TipoActividad.TAREA
+            TipoActividadModel.EXAMEN -> TipoActividadModel.EXAMEN
+            TipoActividadModel.PROYECTO -> TipoActividadModel.PROYECTO
+            TipoActividadModel.TAREA -> TipoActividadModel.TAREA
         }
 
         ActividadCalendario(
