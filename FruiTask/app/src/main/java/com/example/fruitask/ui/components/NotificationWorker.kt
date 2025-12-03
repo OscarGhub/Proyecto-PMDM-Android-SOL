@@ -3,6 +3,7 @@ package com.example.fruitask.ui.components
 import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.content.Context
+import android.os.Build
 import androidx.core.app.NotificationCompat
 import androidx.work.Worker
 import androidx.work.WorkerParameters
@@ -14,22 +15,29 @@ class NotificacionWorker(appContext: Context, workerParams: WorkerParameters) :
     override fun doWork(): Result {
 
         val channelId = "canal_notificacion"
+        val channelName = "Notificaciones periódicas"
         val notificationManager =
             applicationContext.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
 
-        // Crear canal
-        val channel = NotificationChannel(
-            channelId,
-            "Notificaciones periódicas",
-            NotificationManager.IMPORTANCE_DEFAULT
-        )
-        notificationManager.createNotificationChannel(channel)
+        // Crear canal solo si no existe (Android 8+)
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            if (notificationManager.getNotificationChannel(channelId) == null) {
+                val channel = NotificationChannel(
+                    channelId,
+                    channelName,
+                    NotificationManager.IMPORTANCE_DEFAULT
+                )
+                notificationManager.createNotificationChannel(channel)
+            }
+        }
 
         // Construir notificación
         val notification = NotificationCompat.Builder(applicationContext, channelId)
             .setContentTitle("Recordatorio")
-            .setContentText("Esta es una notificación enviada automáticamente.")
-            .setSmallIcon(R.drawable.ic_launcher_foreground)
+            .setContentText("Recuerda hacer las tareas eh.")
+            // ⚠️ Usar icono monocromo, blanco sobre transparente
+            .setSmallIcon(R.drawable.ic_launcher_background)
+            .setAutoCancel(true)
             .build()
 
         // Mostrar notificación

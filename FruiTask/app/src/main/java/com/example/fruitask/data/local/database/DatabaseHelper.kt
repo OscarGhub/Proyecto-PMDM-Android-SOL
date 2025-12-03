@@ -12,7 +12,7 @@ import com.example.fruitask.data.local.model.TipoFruit
 import java.util.Date
 
 class DatabaseHelper(context: Context) : SQLiteOpenHelper(
-    context.applicationContext,  // Cambia esto
+    context.applicationContext,
     DATABASE_NAME,
     null,
     DATABASE_VERSION
@@ -119,8 +119,6 @@ class DatabaseHelper(context: Context) : SQLiteOpenHelper(
                 )
             }
         }
-        // ¡IMPORTANTE! ELIMINAR esta línea:
-        // db.close()
         return fruitList
     }
 
@@ -134,8 +132,6 @@ class DatabaseHelper(context: Context) : SQLiteOpenHelper(
             put(C_F_EXPERIENCIA, fruit.experiencia)
         }
         val id = db.insert(TABLE_FRUIT, null, values)
-        // ¡IMPORTANTE! ELIMINAR esta línea:
-        // db.close()
         return id
     }
 
@@ -152,8 +148,6 @@ class DatabaseHelper(context: Context) : SQLiteOpenHelper(
         val selectionArgs = arrayOf(fruit.id.toString())
 
         val count = db.update(TABLE_FRUIT, values, selection, selectionArgs)
-        // ¡IMPORTANTE! ELIMINAR esta línea:
-        // db.close()
         return count
     }
 
@@ -164,8 +158,6 @@ class DatabaseHelper(context: Context) : SQLiteOpenHelper(
         val selectionArgs = arrayOf(fruitId.toString())
 
         val deletedRows = db.delete(TABLE_FRUIT, selection, selectionArgs)
-        // ¡IMPORTANTE! ELIMINAR esta línea:
-        // db.close()
         return deletedRows
     }
 
@@ -193,8 +185,6 @@ class DatabaseHelper(context: Context) : SQLiteOpenHelper(
                 )
             }
         }
-        // ¡IMPORTANTE! ELIMINAR esta línea:
-        // db.close()
         return null
     }
 
@@ -213,8 +203,6 @@ class DatabaseHelper(context: Context) : SQLiteOpenHelper(
             put(C_T_FRUIT_ID, task.fruitId)
         }
         val id = db.insert(TABLE_TASK, null, values)
-        // ¡IMPORTANTE! ELIMINAR esta línea:
-        // db.close()
         return id
     }
 
@@ -233,8 +221,6 @@ class DatabaseHelper(context: Context) : SQLiteOpenHelper(
         val selectionArgs = arrayOf(task.id.toString())
 
         val count = db.update(TABLE_TASK, values, selection, selectionArgs)
-        // ¡IMPORTANTE! ELIMINAR esta línea:
-        // db.close()
         return count
     }
 
@@ -245,8 +231,6 @@ class DatabaseHelper(context: Context) : SQLiteOpenHelper(
         val selectionArgs = arrayOf(taskId.toString())
 
         val deletedRows = db.delete(TABLE_TASK, selection, selectionArgs)
-        // ¡IMPORTANTE! ELIMINAR esta línea:
-        // db.close()
         return deletedRows
     }
 
@@ -285,8 +269,6 @@ class DatabaseHelper(context: Context) : SQLiteOpenHelper(
                 )
             }
         }
-        // ¡IMPORTANTE! ELIMINAR esta línea:
-        // db.close()
         return taskList
     }
 
@@ -322,8 +304,6 @@ class DatabaseHelper(context: Context) : SQLiteOpenHelper(
                 )
             }
         }
-        // ¡IMPORTANTE! ELIMINAR esta línea:
-        // db.close()
         return taskList
     }
 }
