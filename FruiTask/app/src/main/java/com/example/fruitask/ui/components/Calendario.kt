@@ -21,6 +21,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.example.fruitask.data.local.model.TipoActividad
 import com.example.fruitask.ui.theme.ColorExamen
 import com.example.fruitask.ui.theme.ColorProyecto
 import com.example.fruitask.ui.theme.ColorTarea
@@ -32,6 +33,7 @@ import java.time.YearMonth
 import java.time.format.TextStyle
 import java.util.Locale
 
+
 @Composable
 fun Calendario(
     actividades: List<ActividadCalendario>,
@@ -39,6 +41,9 @@ fun Calendario(
 ) {
     var currentMonth by remember { mutableStateOf(YearMonth.now()) }
     var actividadSeleccionada by remember { mutableStateOf<ActividadCalendario?>(null) }
+    var actividadesDelDia by remember { mutableStateOf<List<ActividadCalendario>>(emptyList()) }
+    var mostrarLista by remember { mutableStateOf(false) }
+
     val locale = Locale("es", "ES")
 
     Column(
@@ -65,7 +70,8 @@ fun Calendario(
             )
 
             Text(
-                text = currentMonth.month.getDisplayName(TextStyle.FULL, locale)
+                text = currentMonth.month
+                    .getDisplayName(TextStyle.FULL, locale)
                     .replaceFirstChar { it.uppercase() } + " " + currentMonth.year,
                 fontSize = 24.sp,
                 fontWeight = FontWeight.Bold,
@@ -104,7 +110,7 @@ fun Calendario(
 
         Spacer(modifier = Modifier.height(8.dp))
 
-        // CENTRAR EN PANTALLA
+        // GRID DEL MES
         Box(
             modifier = Modifier
                 .weight(1f)
@@ -115,12 +121,68 @@ fun Calendario(
                 month = currentMonth,
                 actividades = actividades,
                 modifier = Modifier.wrapContentWidth(),
-            ) { actividad ->
-                actividadSeleccionada = actividad
+            ) { actividadesDia: List<ActividadCalendario> ->
+
+                when (actividadesDia.size) {
+                    0 -> {}
+                    1 -> actividadSeleccionada = actividadesDia.first()
+                    else -> {
+                        actividadesDelDia = actividadesDia
+                        mostrarLista = true
+                    }
+                }
             }
         }
 
-        // POPUP
+        // LISTA ACTIVIDADES
+        if (mostrarLista) {
+            AlertDialog(
+                containerColor = VerdeFondo,
+                titleContentColor = Color.Black,
+                textContentColor = Color.Black,
+                onDismissRequest = { mostrarLista = false },
+
+                title = {
+                    Text(
+                        text = "Actividades del día",
+                        fontSize = 20.sp,
+                        fontWeight = FontWeight.Bold
+                    )
+                },
+
+                text = {
+                    Column {
+                        actividadesDelDia.forEach { act ->
+                            Text(
+                                text = "• ${act.titulo}",
+                                fontSize = 16.sp,
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(vertical = 4.dp)
+                                    .clickable {
+                                        actividadSeleccionada = act
+                                        mostrarLista = false
+                                    }
+                            )
+                        }
+                    }
+                },
+
+                confirmButton = {
+                    Button(
+                        onClick = { mostrarLista = false },
+                        colors = androidx.compose.material3.ButtonDefaults.buttonColors(
+                            containerColor = VerdeBoton,
+                            contentColor = Color.White
+                        )
+                    ) {
+                        Text("Cerrar")
+                    }
+                }
+            )
+        }
+
+        // DIALOGO INDIVIDUAL ---------------------------------
         actividadSeleccionada?.let { actividad ->
             AlertDialog(
                 containerColor = VerdeFondo,
@@ -164,7 +226,7 @@ fun MonthGrid(
     month: YearMonth,
     actividades: List<ActividadCalendario>,
     modifier: Modifier = Modifier,
-    onDateSelected: (ActividadCalendario?) -> Unit
+    onDateSelected: (List<ActividadCalendario>) -> Unit
 ) {
     val firstDay = month.atDay(1)
     val lastDay = month.atEndOfMonth()
@@ -208,7 +270,7 @@ fun MonthGrid(
 fun Dia(
     date: LocalDate?,
     actividades: List<ActividadCalendario>,
-    onClick: (ActividadCalendario?) -> Unit
+    onClick: (List<ActividadCalendario>) -> Unit
 ) {
     if (date == null) {
         Box(
@@ -221,18 +283,23 @@ fun Dia(
 
     val hoy = LocalDate.now()
 
-    val actividad = actividades.firstOrNull {
+    val actividadesDelDia = actividades.filter {
         it.year == date.year &&
                 it.month == date.monthValue &&
                 it.day == date.dayOfMonth
     }
 
-    val actividadColor = when (actividad?.tipo) {
-        TipoActividad.EXAMEN -> ColorExamen
-        TipoActividad.PROYECTO -> ColorProyecto
-        TipoActividad.TAREA -> ColorTarea
-        else -> Color.Transparent
-    }
+    val tieneVarias = actividadesDelDia.size > 1
+    val tieneUna = actividadesDelDia.size == 1
+
+    val actividadColor = if (tieneUna) {
+        when (actividadesDelDia.first().tipo) {
+            TipoActividad.EXAMEN -> ColorExamen
+            TipoActividad.PROYECTO -> ColorProyecto
+            TipoActividad.TAREA -> ColorTarea
+            else -> Color.Transparent
+        }
+    } else Color.Transparent
 
     val esHoy = date == hoy
 
@@ -241,12 +308,56 @@ fun Dia(
             .padding(4.dp)
             .aspectRatio(1f)
             .clip(CircleShape)
-            .background(
-                if (actividad != null) actividadColor else Color.Transparent
-            )
-            .clickable { onClick(actividad) },
+            .background(actividadColor)
+            .clickable {
+                if (actividadesDelDia.isNotEmpty()) {
+                    onClick(actividadesDelDia)
+                }
+            },
         contentAlignment = Alignment.Center
     ) {
+
+        Column(
+            modifier = Modifier.fillMaxSize(),
+            verticalArrangement = Arrangement.Center,
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+
+            // Número del día
+            Text(
+                text = date.dayOfMonth.toString(),
+                fontWeight = if (tieneUna || esHoy) FontWeight.Bold else FontWeight.Normal
+            )
+
+            // Puntitos si hay varias actividades
+            if (tieneVarias) {
+                Row(
+                    horizontalArrangement = Arrangement.Center,
+                    verticalAlignment = Alignment.CenterVertically,
+                    modifier = Modifier.padding(top = 4.dp)
+                ) {
+                    actividadesDelDia.forEach { actividad ->
+                        val color = when (actividad.tipo) {
+                            TipoActividad.EXAMEN -> ColorExamen
+                            TipoActividad.PROYECTO -> ColorProyecto
+                            TipoActividad.TAREA -> ColorTarea
+                            else -> Color.Transparent
+                        }
+
+                        Box(
+                            modifier = Modifier
+                                .size(8.dp)
+                                .clip(CircleShape)
+                                .background(color)
+                        )
+
+                        Spacer(modifier = Modifier.width(4.dp))
+                    }
+                }
+            }
+        }
+
+        // Hoy
         if (esHoy) {
             Box(
                 modifier = Modifier
@@ -255,10 +366,5 @@ fun Dia(
                     .background(Color(0xFF9EC9FF).copy(alpha = 0.6f))
             )
         }
-
-        Text(
-            text = date.dayOfMonth.toString(),
-            fontWeight = if (actividad != null || esHoy) FontWeight.Bold else FontWeight.Normal
-        )
     }
 }
