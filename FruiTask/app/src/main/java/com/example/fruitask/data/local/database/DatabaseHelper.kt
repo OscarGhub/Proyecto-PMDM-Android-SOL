@@ -11,7 +11,12 @@ import com.example.fruitask.data.local.model.TipoActividad
 import com.example.fruitask.data.local.model.TipoFruit
 import java.util.Date
 
-class DatabaseHelper(context: Context) : SQLiteOpenHelper(context, DATABASE_NAME , null, DATABASE_VERSION ) {
+class DatabaseHelper(context: Context) : SQLiteOpenHelper(
+    context.applicationContext,  // Cambia esto
+    DATABASE_NAME,
+    null,
+    DATABASE_VERSION
+) {
     companion object {
         const val DATABASE_NAME = "fruitask.db"
         const val DATABASE_VERSION = 1
@@ -83,7 +88,7 @@ class DatabaseHelper(context: Context) : SQLiteOpenHelper(context, DATABASE_NAME
     // Recuperar TODAS las frutas
     fun getAllFruits(): List<Fruit> {
         val fruitList = mutableListOf<Fruit>()
-        val db = readableDatabase
+        val db = readableDatabase  // NO cerrar después
 
         val cursor: Cursor = db.query(
             TABLE_FRUIT,
@@ -114,13 +119,14 @@ class DatabaseHelper(context: Context) : SQLiteOpenHelper(context, DATABASE_NAME
                 )
             }
         }
-        db.close()
+        // ¡IMPORTANTE! ELIMINAR esta línea:
+        // db.close()
         return fruitList
     }
 
     // --- Inserción de FRUIT ---
     fun insertFruit(fruit: Fruit): Long {
-        val db = this.writableDatabase
+        val db = this.writableDatabase  // NO cerrar después
         val values = ContentValues().apply {
             put(C_F_NOMBRE, fruit.nombre)
             put(C_F_TIPO, fruit.tipo.name)
@@ -128,13 +134,14 @@ class DatabaseHelper(context: Context) : SQLiteOpenHelper(context, DATABASE_NAME
             put(C_F_EXPERIENCIA, fruit.experiencia)
         }
         val id = db.insert(TABLE_FRUIT, null, values)
-        db.close()
+        // ¡IMPORTANTE! ELIMINAR esta línea:
+        // db.close()
         return id
     }
 
     // --- Actualización de FRUIT ---
     fun updateFruit(fruit: Fruit): Int {
-        val db = this.writableDatabase
+        val db = this.writableDatabase  // NO cerrar después
         val values = ContentValues().apply {
             put(C_F_NOMBRE, fruit.nombre)
             put(C_F_TIPO, fruit.tipo.name)
@@ -145,24 +152,26 @@ class DatabaseHelper(context: Context) : SQLiteOpenHelper(context, DATABASE_NAME
         val selectionArgs = arrayOf(fruit.id.toString())
 
         val count = db.update(TABLE_FRUIT, values, selection, selectionArgs)
-        db.close()
+        // ¡IMPORTANTE! ELIMINAR esta línea:
+        // db.close()
         return count
     }
 
     // --- Borrado de FRUIT ---
     fun deleteFruit(fruitId: Int): Int {
-        val db = this.writableDatabase
+        val db = this.writableDatabase  // NO cerrar después
         val selection = "$C_F_ID = ?"
         val selectionArgs = arrayOf(fruitId.toString())
 
         val deletedRows = db.delete(TABLE_FRUIT, selection, selectionArgs)
-        db.close()
+        // ¡IMPORTANTE! ELIMINAR esta línea:
+        // db.close()
         return deletedRows
     }
 
     // Fruta por Id
     fun getFruitById(fruitId: Int): Fruit? {
-        val db = readableDatabase
+        val db = readableDatabase  // NO cerrar después
         val selection = "$C_F_ID = ?"
         val selectionArgs = arrayOf(fruitId.toString())
 
@@ -184,13 +193,14 @@ class DatabaseHelper(context: Context) : SQLiteOpenHelper(context, DATABASE_NAME
                 )
             }
         }
-        db.close()
+        // ¡IMPORTANTE! ELIMINAR esta línea:
+        // db.close()
         return null
     }
 
     // --- Inserción de TASK ---
     fun insertTask(task: Task): Long {
-        val db = this.writableDatabase
+        val db = this.writableDatabase  // NO cerrar después
         val values = ContentValues().apply {
             put(C_T_NOMBRE, task.nombreTarea)
             put(C_T_DESCRIPCION, task.descripcionTarea)
@@ -203,13 +213,14 @@ class DatabaseHelper(context: Context) : SQLiteOpenHelper(context, DATABASE_NAME
             put(C_T_FRUIT_ID, task.fruitId)
         }
         val id = db.insert(TABLE_TASK, null, values)
-        db.close()
+        // ¡IMPORTANTE! ELIMINAR esta línea:
+        // db.close()
         return id
     }
 
     // --- Actualización de TASK ---
     fun updateTask(task: Task): Int {
-        val db = this.writableDatabase
+        val db = this.writableDatabase  // NO cerrar después
         val values = ContentValues().apply {
             put(C_T_NOMBRE, task.nombreTarea)
             put(C_T_DESCRIPCION, task.descripcionTarea)
@@ -222,25 +233,27 @@ class DatabaseHelper(context: Context) : SQLiteOpenHelper(context, DATABASE_NAME
         val selectionArgs = arrayOf(task.id.toString())
 
         val count = db.update(TABLE_TASK, values, selection, selectionArgs)
-        db.close()
+        // ¡IMPORTANTE! ELIMINAR esta línea:
+        // db.close()
         return count
     }
 
     // --- Eliminación de TASK ---
     fun deleteTask(taskId: Int): Int {
-        val db = this.writableDatabase
+        val db = this.writableDatabase  // NO cerrar después
         val selection = "$C_T_ID = ?"
         val selectionArgs = arrayOf(taskId.toString())
 
         val deletedRows = db.delete(TABLE_TASK, selection, selectionArgs)
-        db.close()
+        // ¡IMPORTANTE! ELIMINAR esta línea:
+        // db.close()
         return deletedRows
     }
 
     // --- Lectura de Tareas por Fruta ---
     fun getTasksForFruit(fruitId: Int): List<Task> {
         val taskList = mutableListOf<Task>()
-        val db = this.readableDatabase
+        val db = this.readableDatabase  // NO cerrar después
 
         val selection = "$C_T_FRUIT_ID = ?"
         val selectionArgs = arrayOf(fruitId.toString())
@@ -272,14 +285,15 @@ class DatabaseHelper(context: Context) : SQLiteOpenHelper(context, DATABASE_NAME
                 )
             }
         }
-        db.close()
+        // ¡IMPORTANTE! ELIMINAR esta línea:
+        // db.close()
         return taskList
     }
 
     // --- Lectura de TODAS las Tareas ---
     fun getAllTasks(): List<Task> {
         val taskList = mutableListOf<Task>()
-        val db = this.readableDatabase
+        val db = this.readableDatabase  // NO cerrar después
 
         val cursor = db.query(TABLE_TASK, null, null, null, null, null, null)
 
@@ -292,7 +306,7 @@ class DatabaseHelper(context: Context) : SQLiteOpenHelper(context, DATABASE_NAME
                 val fechaLong = it.getLong(it.getColumnIndexOrThrow(C_T_FECHA))
                 val estadoActInt = it.getInt(it.getColumnIndexOrThrow(C_T_ESTADO_ACT))
                 val tareaHechaInt = it.getInt(it.getColumnIndexOrThrow(C_T_TAREA_HECHA))
-                val fId = it.getInt(it.getColumnIndexOrThrow(C_T_FRUIT_ID)) // También recuperamos el FruitId
+                val fId = it.getInt(it.getColumnIndexOrThrow(C_T_FRUIT_ID))
 
                 taskList.add(
                     Task(
@@ -308,8 +322,8 @@ class DatabaseHelper(context: Context) : SQLiteOpenHelper(context, DATABASE_NAME
                 )
             }
         }
-        db.close()
+        // ¡IMPORTANTE! ELIMINAR esta línea:
+        // db.close()
         return taskList
     }
-
 }
