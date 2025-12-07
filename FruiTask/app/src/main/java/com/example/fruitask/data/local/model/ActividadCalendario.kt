@@ -1,7 +1,4 @@
-package com.example.fruitask.ui.components
-
-import com.example.fruitask.data.local.model.TipoActividad
-
+package com.example.fruitask.data.local.model
 
 data class ActividadCalendario(
     val year: Int,

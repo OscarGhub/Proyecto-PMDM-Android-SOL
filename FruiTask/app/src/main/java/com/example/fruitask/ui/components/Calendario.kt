@@ -21,6 +21,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.example.fruitask.data.local.model.ActividadCalendario
 import com.example.fruitask.data.local.model.TipoActividad
 import com.example.fruitask.ui.theme.ColorExamen
 import com.example.fruitask.ui.theme.ColorProyecto
