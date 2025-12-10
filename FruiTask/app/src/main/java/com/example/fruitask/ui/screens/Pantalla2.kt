@@ -18,7 +18,7 @@ import com.example.fruitask.R
 import com.example.fruitask.data.local.database.MyViewModel
 import com.example.fruitask.data.local.model.TipoActividad as TipoActividadModel
 import com.example.fruitask.data.local.model.Task
-import com.example.fruitask.ui.components.ActividadCalendario
+import com.example.fruitask.data.local.model.ActividadCalendario
 import com.example.fruitask.ui.components.Calendario
 import com.example.fruitask.ui.theme.VerdeFondo
 import java.util.*
